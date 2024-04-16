@@ -35,7 +35,6 @@ require("lazy").setup({
 	-- file tree
 	{
 		"kyazdani42/nvim-tree.lua", -- Nvim Tree
-		tag = "nightly", -- optional, updated every week. (see issue #1193)
 	},
 	{
 		"vinnymeller/swagger-preview.nvim",

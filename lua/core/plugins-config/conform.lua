@@ -4,7 +4,7 @@ require("conform").setup({
 		-- Use a sub-list to run only the first available formatter
 		javascript = { { "prettierd", "prettier" } },
 		javascriptreact = { { "prettierd", "prettier" } },
-		php = { { "intelephense" } },
+		php = { { "pretty-php" } },
 		typescript = { { "prettierd", "prettier" } },
 		json = { { "biome" } },
 		go = { { "golines", "goimports" } },

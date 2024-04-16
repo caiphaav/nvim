@@ -1,1 +1,1 @@
-# nvim
+# nvim configuration 

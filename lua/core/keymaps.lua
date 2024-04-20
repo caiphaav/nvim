@@ -65,5 +65,8 @@ api.nvim_set_keymap("n", "<C-a>", "ggVG", { noremap = true, silent = true })
 
 -- Save operation
 -- MacOS Cmd + s Insert and Normal mode
+api.nvim_set_keymap("i", "<C-s>", "<Esc>:w<CR>", { noremap = true, silent = true })
+api.nvim_set_keymap("n", "<C-s>", "<Esc>:w<CR>", { noremap = true, silent = true })
+-- Linux/Windows Ctrl + S
 api.nvim_set_keymap("i", "<D-s>", "<Esc>:w<CR>", { noremap = true, silent = true })
 api.nvim_set_keymap("n", "<D-s>", "<Esc>:w<CR>", { noremap = true, silent = true })

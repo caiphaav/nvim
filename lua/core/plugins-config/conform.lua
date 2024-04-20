@@ -2,13 +2,13 @@ require("conform").setup({
 	formatters_by_ft = {
 		lua = { "stylua" },
 		-- Use a sub-list to run only the first available formatter
-		javascript = { { "prettierd", "prettier" } },
-		javascriptreact = { { "prettierd", "prettier" } },
+		javascript = { { "biome" } },
+		javascriptreact = { { "biome" } },
 		php = { { "pretty-php" } },
-		typescript = { { "prettierd", "prettier" } },
+		typescript = { { "biome" } },
 		json = { { "biome" } },
 		go = { { "golines", "goimports" } },
-		typescriptreact = { { "prettierd", "prettier" } },
+		typescriptreact = { { "biome" } },
 	},
 	format_on_save = {
 		-- These options will be passed to conform.format()

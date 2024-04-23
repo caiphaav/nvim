@@ -1,4 +1,5 @@
 require("core.plugins-config.colorscheme")
+require("core.plugins-config.trouble")
 require("core.plugins-config.lualine")
 require("core.plugins-config.harpoon")
 require("core.plugins-config.treesitter")

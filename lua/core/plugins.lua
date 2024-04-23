@@ -11,6 +11,11 @@ require("lazy").setup({
 	"nvim-treesitter/nvim-treesitter",
 	"github/copilot.vim",
 	"stevearc/conform.nvim",
+	-- errormsg
+	{
+		"folke/trouble.nvim",
+		dependencies = { "nvim-tree/nvim-web-devicons" },
+	},
 	-- completion
 	"hrsh7th/nvim-cmp",
 	"hrsh7th/cmp-nvim-lsp",

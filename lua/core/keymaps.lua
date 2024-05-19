@@ -15,6 +15,41 @@ keymap.set("n", "dsl", "d^", { silent = true })
 keymap.set("n", "mel", "<S-$>", { silent = true })
 keymap.set("n", "msl", "<S-^>", { silent = true })
 
+-- Delete until first symbol
+local function delete_until_symbol()
+  local symbol = vim.fn.input("Enter symbol: ")
+  if symbol == "" then
+    print("No symbol entered")
+    return
+  end
+
+  -- Get the current buffer content as a single string
+  local buffer_content = table.concat(vim.api.nvim_buf_get_lines(0, 0, -1, false), "\n")
+  -- Convert cursor position to a single index
+  local current_line = vim.fn.line('.')
+  local current_col = vim.fn.col('.')
+  local cursor_pos = vim.fn.line2byte(current_line) + current_col - 1  -- Convert to byte position (1-based index)
+  local symbol_pos = buffer_content:find(symbol, cursor_pos + 1, true) -- Find the symbol starting after the cursor
+
+  if symbol_pos then
+    -- Calculate the line and column of the symbol position
+    local before_symbol = buffer_content:sub(1, symbol_pos - 1)
+    local line_count = #vim.split(before_symbol, "\n")
+    local col_count = #before_symbol:match("([^\n]*)$")
+
+    -- Select the range from cursor to the symbol position and delete
+    local end_line = line_count
+    local end_col = col_count
+
+    -- Ensure correct position for deletion
+    vim.api.nvim_buf_set_text(0, current_line - 1, current_col - 1, end_line - 1, end_col, {})
+  else
+    print("Symbol not found")
+  end
+end
+
+keymap.set("n", "ds", delete_until_symbol, { silent = true })
+
 -- Change window
 keymap.set("", "<S-Left>", "<C-w>h")
 keymap.set("", "<S-Up>", "<C-w>k")

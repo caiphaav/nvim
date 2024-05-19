@@ -10,6 +10,7 @@ require("lazy").setup({
   "nvim-lualine/lualine.nvim",
   "nvim-treesitter/nvim-treesitter",
   "github/copilot.vim",
+  -- foormatter
   {
     "stevearc/conform.nvim",
     version = "5.6.0",
@@ -29,6 +30,28 @@ require("lazy").setup({
   "williamboman/mason.nvim",
   "williamboman/mason-lspconfig.nvim",
   "neovim/nvim-lspconfig",
+  --tailwindcss
+  {
+    "luckasRanarison/tailwind-tools.nvim",
+    init = function()
+      vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
+        pattern = '*.tsx, *.html, *.js, *.jsx',
+        command = "TailwindSort"
+      })
+    end,
+    dependencies = { "nvim-treesitter/nvim-treesitter" },
+    opts = {
+      sort = {
+        enabled = true
+      }
+    } -- your configuration
+  },
+  {
+    'razak17/tailwind-fold.nvim',
+    opts = {},
+    dependencies = { 'nvim-treesitter/nvim-treesitter' },
+    ft = { 'html', 'svelte', 'astro', 'vue', 'typescriptreact', 'php', 'blade', 'javascriptreact', 'twig' },
+  },
   --terminal
   "akinsho/toggleterm.nvim",
   tag = "*",

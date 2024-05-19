@@ -9,6 +9,12 @@ vim.g.maplocalleader = " "
 keymap.set("n", "hh", ":belowright split new<CR>", { silent = true })
 keymap.set("n", "ss", ":below vsplit new<CR>", { silent = true })
 
+-- Delete/Move until line start/end
+keymap.set("n", "del", "d$", { silent = true })
+keymap.set("n", "dsl", "d^", { silent = true })
+keymap.set("n", "mel", "<S-$>", { silent = true })
+keymap.set("n", "msl", "<S-^>", { silent = true })
+
 -- Change window
 keymap.set("", "<S-Left>", "<C-w>h")
 keymap.set("", "<S-Up>", "<C-w>k")
@@ -34,23 +40,23 @@ keymap.set("n", "<F1>", ":NvimTreeFocus<CR>")
 --Terminal
 
 function ToggleTerminal()
-	local term_buf_exists = false
-	for _, buf in ipairs(api.nvim_list_bufs()) do
-		if vim.bo[buf].buftype == "terminal" then
-			term_buf_exists = true
-			break
-		end
-	end
+  local term_buf_exists = false
+  for _, buf in ipairs(api.nvim_list_bufs()) do
+    if vim.bo[buf].buftype == "terminal" then
+      term_buf_exists = true
+      break
+    end
+  end
 
-	if term_buf_exists then
-		vim.cmd("silent! bd! term://")
-	else
-		vim.cmd("belowright split term://zsh")
+  if term_buf_exists then
+    vim.cmd("silent! bd! term://")
+  else
+    vim.cmd("belowright split term://zsh")
 
-		local term_win = api.nvim_get_current_win()
-		local term_buf = api.nvim_win_get_buf(term_win)
-		api.nvim_buf_set_keymap(term_buf, "t", "<Esc>", "<C-\\><C-n>", { noremap = true })
-	end
+    local term_win = api.nvim_get_current_win()
+    local term_buf = api.nvim_win_get_buf(term_win)
+    api.nvim_buf_set_keymap(term_buf, "t", "<Esc>", "<C-\\><C-n>", { noremap = true })
+  end
 end
 
 keymap.set("n", "<S-t>", ":lua ToggleTerminal()<CR>")

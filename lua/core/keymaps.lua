@@ -9,11 +9,51 @@ vim.g.maplocalleader = " "
 keymap.set("n", "hh", ":belowright split new<CR>", { silent = true })
 keymap.set("n", "ss", ":below vsplit new<CR>", { silent = true })
 
--- Delete/Move until line start/end
+-- Delete/Move/Yank until line start/end
 keymap.set("n", "del", "d$", { silent = true })
 keymap.set("n", "dsl", "d^", { silent = true })
 keymap.set("n", "mel", "<S-$>", { silent = true })
 keymap.set("n", "msl", "<S-^>", { silent = true })
+keymap.set("n", "yel", "y$", { silent = true })
+keymap.set("n", "ysl", "y^", { silent = true })
+
+-- Generic function to replace content from the cursor position to the end or start of the line with yanked content
+local function replace_with_yanked_content(option)
+  -- Get the current line number and cursor column
+  local current_line_number = vim.fn.line('.')
+  local current_col = vim.fn.col('.')
+
+  -- Get the yanked content from the clipboard
+  local yanked_content = vim.fn.getreg('+') -- Using '+' to get the clipboard content
+
+  -- Check if the clipboard is empty
+  if yanked_content == nil or yanked_content == '' then
+    print("No content in the clipboard")
+    return
+  end
+
+  -- Get the current line content
+  local line_content = vim.fn.getline(current_line_number)
+
+  local new_line_content
+  if option == 'end' then
+    -- Replace the content from the cursor to the end of the line
+    new_line_content = string.sub(line_content, 1, current_col - 1) .. yanked_content
+    print("Replaced from cursor to end of line with yanked content")
+  elseif option == 'start' then
+    -- Replace the content from the start of the line to the cursor
+    new_line_content = yanked_content .. string.sub(line_content, current_col)
+    print("Replaced from start of line to cursor with yanked content")
+  else
+    print("Invalid option")
+    return
+  end
+
+  vim.fn.setline(current_line_number, new_line_content)
+end
+
+keymap.set("n", "yer", function() replace_with_yanked_content('end') end, { silent = true })
+keymap.set("n", "ysr", function() replace_with_yanked_content('start') end, { silent = true })
 
 -- Delete until first symbol
 local function delete_until_symbol()

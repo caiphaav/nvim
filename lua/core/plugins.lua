@@ -1,11 +1,5 @@
 require("lazy").setup({
-	{
-		"rockyzhang24/arctic.nvim",
-		dependencies = { "rktjmp/lush.nvim" },
-		name = "arctic",
-		branch = "main",
-		priority = 1000,
-	},
+	"tiagovla/tokyodark.nvim",
 	"tpope/vim-commentary",
 	"mattn/emmet-vim",
 	"ThePrimeagen/harpoon",

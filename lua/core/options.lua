@@ -41,7 +41,6 @@ opt.splitbelow = false
 vim.scriptencoding = "utf-8"
 opt.encoding = "utf-8"
 opt.fileencodings = { "utf-8", "gbk", "gb2312" }
-opt.termencoding = "utf-8"
 
 -- Sync clipboard between OS and Neovim.
 --  Remove this option if you want your OS clipboard to remain independent.

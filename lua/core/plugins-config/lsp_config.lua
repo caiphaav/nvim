@@ -4,6 +4,8 @@ require("mason-lspconfig").setup({
     "tsserver",
     "tailwindcss",
     "gopls",
+    "dartls",
+    "ast_grep",
     "html",
     "cssls",
     "intelephense",
@@ -37,10 +39,12 @@ require("lspconfig").lua_ls.setup({
   },
 })
 
+require("lspconfig").dartls.setup({})
 require("lspconfig").tsserver.setup({})
 require("lspconfig").gopls.setup({})
 require("lspconfig").tailwindcss.setup({})
 require("lspconfig").html.setup({})
+require("lspconfig").ast_grep.setup({})
 require("lspconfig").cssls.setup({})
 require("lspconfig").intelephense.setup({})
 require("lspconfig").sqlls.setup({})

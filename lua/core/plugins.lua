@@ -4,7 +4,6 @@ require("lazy").setup({
   "mattn/emmet-vim",
   "ThePrimeagen/harpoon",
   "nvim-telescope/telescope-live-grep-args.nvim",
-  "TrevorS/uuid-nvim",
   "nvim-tree/nvim-tree.lua",
   "nvim-tree/nvim-web-devicons",
   "nvim-lualine/lualine.nvim",
@@ -65,9 +64,6 @@ require("lazy").setup({
     dependencies = { "nvim-treesitter/nvim-treesitter" },
     ft = { "html", "svelte", "astro", "vue", "typescriptreact", "php", "blade", "javascriptreact", "twig" },
   },
-  --terminal
-  "akinsho/toggleterm.nvim",
-  tag = "*",
   -- windows
   {
     "anuvyklack/windows.nvim",
@@ -79,10 +75,6 @@ require("lazy").setup({
   -- file tree
   {
     "kyazdani42/nvim-tree.lua", -- Nvim Tree
-  },
-  {
-    "vinnymeller/swagger-preview.nvim",
-    run = "npm install -g swagger-ui-watcher",
   },
   {
     "iamcco/markdown-preview.nvim",

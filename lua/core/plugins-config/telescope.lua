@@ -1,22 +1,58 @@
-require("telescope").setup({ file_ignore_patterns = { "node%_modules/.*" } })
+local telescope = require("telescope")
 local builtin = require("telescope.builtin")
 
--- Telescope config. see `:help telescope.builtin`
+telescope.setup({
+  defaults = {
+    file_ignore_patterns = {
+      "node_modules/.*",
+      ".git/.*",
+      ".dist/.*",
+      ".output/.*",
+      ".dart_tool/.*",
+      ".github/.*",
+      ".gradle/.*",
+      ".idea/.*",
+      ".vscode/.*",
+      "build/.*",
+      "gradle/.*",
+      "vendor/.*",   -- Ignoring vendor folder
+      "packages/.*", -- Ignoring Dart packages folder
+      "%.lock",
+      "%.sum",
+      "%.mod",
+      "%.apk",
+      "%.png",
+      "%.jpg",
+      "%.jpeg",
+      "%.webp",
+      "%.svg",
+      "%.otf",
+      "%.ttf",
+    },
+    mappings = {
+      i = {
+        ["<C-u>"] = false,
+        ["<C-d>"] = false,
+      },
+    },
+  },
+})
+
+-- Enable telescope fzf native, if installed
+pcall(telescope.load_extension, "fzf")
+
+vim.keymap.set("n", "<leader>?", builtin.oldfiles, { desc = "[?] Find recently opened files" })
+vim.keymap.set("n", "<leader><space>", builtin.buffers, { desc = "[ ] Find existing buffers" })
 vim.keymap.set("n", "<leader>/", function()
-    -- You can pass additional configuration to telescope to change theme, layout, etc.
-    require("telescope.builtin").current_buffer_fuzzy_find(require("telescope.themes").get_dropdown({
-        winblend = 10,
-        previewer = true,
-    }))
+  builtin.current_buffer_fuzzy_find(require("telescope.themes").get_dropdown {
+    winblend = 10,
+    previewer = false,
+  })
 end, { desc = "[/] Fuzzily search in current buffer" })
 
-local function telescope_live_grep_open_files()
-    builtin.live_grep({
-        grep_open_files = true,
-        prompt_title = "Live Grep in Open Files",
-    })
-end
-vim.keymap.set("n", "<leader>ff", builtin.find_files, { desc = "[S]earch [F]iles" })
-vim.keymap.set("n", "<leader>sw", builtin.grep_string, { desc = "[S]earch current [W]ord" })
-vim.keymap.set("n", "<leader>lg", builtin.live_grep, { desc = "[S]earch by [G]rep" })
-vim.keymap.set("n", "<leader>lgo", telescope_live_grep_open_files, { desc = "[S]earch [/] in Open Files" })
+vim.keymap.set("n", "<leader>ff", builtin.find_files, { desc = "[F]ind [F]iles" })
+vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "[F]ind [H]elp" })
+vim.keymap.set("n", "<leader>fw", builtin.grep_string, { desc = "[F]ind current [W]ord" })
+vim.keymap.set("n", "<leader>fg", builtin.live_grep, { desc = "[F]ind by [G]rep" })
+vim.keymap.set("n", "<leader>fd", builtin.diagnostics, { desc = "[F]ind [D]iagnostics" })
+vim.keymap.set("n", "<leader>fr", builtin.resume, { desc = "[F]ind [R]esume" })

@@ -52,8 +52,8 @@ local function replace_with_yanked_content(option)
   vim.fn.setline(current_line_number, new_line_content)
 end
 
-keymap.set("n", "yer", function() replace_with_yanked_content('end') end, { silent = true })
-keymap.set("n", "ysr", function() replace_with_yanked_content('start') end, { silent = true })
+keymap.set("n", "yre", function() replace_with_yanked_content('end') end, { silent = true })
+keymap.set("n", "yrs", function() replace_with_yanked_content('start') end, { silent = true })
 
 -- Delete until first symbol
 local function delete_until_symbol()
@@ -96,12 +96,6 @@ keymap.set("", "<S-Up>", "<C-w>k")
 keymap.set("", "<S-Down>", "<C-w>j")
 keymap.set("", "<S-Right>", "<C-w>l")
 
--- Tab
-keymap.set("n", "<C-n>", ":tabnew<Return>")
-keymap.set("n", "<C-j>", "<cmd>BufferLineCycleNext<CR>", {})
-keymap.set("n", "<C-k>", "<cmd>BufferLineCyclePrev<CR>", {})
-keymap.set("n", "<C-q>", ":bd<CR>")
-
 -- File
 keymap.set("n", "<C-s>", ":wa<CR>")
 keymap.set("n", "<S-s>", "<nop>")
@@ -111,32 +105,6 @@ keymap.set("n", "fwq", ":wqa<CR>")
 -- Nvim-tree
 keymap.set("n", "<F2>", ":NvimTreeFindFileToggle<CR>")
 keymap.set("n", "<F1>", ":NvimTreeFocus<CR>")
-
---Terminal
-
-function ToggleTerminal()
-  local term_buf_exists = false
-  for _, buf in ipairs(api.nvim_list_bufs()) do
-    if vim.bo[buf].buftype == "terminal" then
-      term_buf_exists = true
-      break
-    end
-  end
-
-  if term_buf_exists then
-    vim.cmd("silent! bd! term://")
-  else
-    vim.cmd("belowright split term://zsh")
-
-    local term_win = api.nvim_get_current_win()
-    local term_buf = api.nvim_win_get_buf(term_win)
-    api.nvim_buf_set_keymap(term_buf, "t", "<Esc>", "<C-\\><C-n>", { noremap = true })
-  end
-end
-
-keymap.set("n", "<S-t>", ":lua ToggleTerminal()<CR>")
-
--- Telescope config search in ./plugins-config
 
 -- Redo operation
 keymap.set("n", "r", "<C-r>", { noremap = true, silent = true })

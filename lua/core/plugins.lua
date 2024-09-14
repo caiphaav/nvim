@@ -31,6 +31,14 @@ require("lazy").setup({
       require("supermaven-nvim").setup({})
     end,
   },
+  -- initial screen
+  {
+    "goolord/alpha-nvim",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    config = function()
+      require 'alpha'.setup(require 'alpha.themes.dashboard'.config)
+    end
+  },
   -- foormatter
   {
     "stevearc/conform.nvim",
@@ -87,12 +95,14 @@ require("lazy").setup({
     "iamcco/markdown-preview.nvim",
     run = "cd app && npm install",
   },
+  -- telescope
   {
     "nvim-telescope/telescope.nvim",
     tag = "0.1.5",
     dependencies = {
       "nvim-lua/plenary.nvim",
       "debugloop/telescope-undo.nvim",
+      "nvim-telescope/telescope-file-browser.nvim",
       "nvim-telescope/telescope-live-grep-args.nvim"
     },
   },

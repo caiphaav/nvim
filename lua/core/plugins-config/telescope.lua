@@ -40,12 +40,20 @@ telescope.setup({
       },
     },
   },
+  extensions = {
+    file_browser = {
+      theme = "ivy",
+      -- disables netrw and use telescope-file-browser in its place
+      hijack_netrw = true,
+    },
+  }
 })
 
 -- Enable telescope fzf native, if installed
 pcall(telescope.load_extension, "fzf")
 pcall(telescope.load_extension, "live_grep_args")
 pcall(telescope.load_extension, "undo")
+pcall(telescope.load_extension, "file_browser")
 
 vim.keymap.set("n", "<leader>?", builtin.oldfiles, { desc = "[?] Find recently opened files" })
 vim.keymap.set("n", "<leader><space>", builtin.buffers, { desc = "[ ] Find existing buffers" })
@@ -63,3 +71,4 @@ vim.keymap.set("n", "<leader>fg", ":lua require('telescope').extensions.live_gre
   { desc = "[F]ind [G]rep" })
 vim.keymap.set("n", "<leader>fd", builtin.diagnostics, { desc = "[F]ind [D]iagnostics" })
 vim.keymap.set("n", "<leader>fr", builtin.resume, { desc = "[F]ind [R]esume" })
+vim.keymap.set("n", "<space>fb", ":Telescope file_browser<CR>", { desc = "[F]ind [B]rowser" })

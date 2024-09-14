@@ -3,7 +3,6 @@ require("lazy").setup({
   "tpope/vim-commentary",
   "mattn/emmet-vim",
   "ThePrimeagen/harpoon",
-  "nvim-telescope/telescope-live-grep-args.nvim",
   "nvim-tree/nvim-tree.lua",
   "nvim-tree/nvim-web-devicons",
   "nvim-lualine/lualine.nvim",
@@ -83,6 +82,14 @@ require("lazy").setup({
   {
     "nvim-telescope/telescope.nvim",
     tag = "0.1.5",
-    dependencies = { "nvim-lua/plenary.nvim" },
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "debugloop/telescope-undo.nvim",
+      "nvim-telescope/telescope-live-grep-args.nvim"
+    },
+    config = function()
+      require("telescope").load_extension("undo")
+      require("telescope").load_extension("live_grep_args")
+    end,
   },
 })

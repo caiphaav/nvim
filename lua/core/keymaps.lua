@@ -24,8 +24,11 @@ keymap.set("n", "hh", ":belowright split new<CR>", { silent = true })
 keymap.set("n", "ss", ":below vsplit new<CR>", { silent = true })
 
 -- Delete/Move/Yank until line start/end
-keymap.set("n", "del", "d$", { silent = true })
-keymap.set("n", "dsl", "d^", { silent = true })
+-- keymap.set("n", "del", "d$", { silent = true })
+keymap.set("n", "del", '""*d$',
+  { noremap = true, silent = true, desc = "Delete to end of line and copy to clipboard" })
+keymap.set("n", "dsl", '""*d^',
+  { silent = true, noremap = true, desc = "Delete to start of line and copy to clipboard" })
 keymap.set("n", "mel", "<S-$>", { silent = true })
 keymap.set("n", "msl", "<S-^>", { silent = true })
 keymap.set("n", "yel", "y$", { silent = true })

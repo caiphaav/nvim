@@ -19,11 +19,3 @@ require("core.options")
 require("core.keymaps")
 require("core.plugins")
 require("core.plugins-config")
-
--- open nvim-tree on startup
--- vim.api.nvim_create_autocmd("VimEnter", {
--- 	pattern = "*",
--- 	callback = function()
--- 		vim.cmd(":NvimTreeFocus")
--- 	end,
--- })

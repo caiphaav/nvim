@@ -82,6 +82,7 @@ local function delete_until_symbol()
 
   -- Get the current buffer content as a single string
   local buffer_content = table.concat(vim.api.nvim_buf_get_lines(0, 0, -1, false), "\n")
+
   -- Convert cursor position to a single index
   local current_line = vim.fn.line('.')
   local current_col = vim.fn.col('.')
@@ -94,12 +95,20 @@ local function delete_until_symbol()
     local line_count = #vim.split(before_symbol, "\n")
     local col_count = #before_symbol:match("([^\n]*)$")
 
+    -- Extract the text to be deleted
+    local text_to_delete = buffer_content:sub(cursor_pos, symbol_pos - 1)
+
+    -- Copy the text to be deleted to the system clipboard
+    vim.fn.setreg('+', text_to_delete)
+
     -- Select the range from cursor to the symbol position and delete
     local end_line = line_count
     local end_col = col_count
 
     -- Ensure correct position for deletion
     vim.api.nvim_buf_set_text(0, current_line - 1, current_col - 1, end_line - 1, end_col, {})
+
+    print("Deleted text copied to clipboard")
   else
     print("Symbol not found")
   end

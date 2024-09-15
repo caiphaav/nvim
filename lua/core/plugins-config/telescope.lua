@@ -1,5 +1,40 @@
 local telescope = require("telescope")
 local builtin = require("telescope.builtin")
+local fb_actions = require "telescope".extensions.file_browser.actions
+local actions = require "telescope.actions"
+
+-- Custom paste action
+local function paste_file(prompt_bufnr)
+  local current_picker = actions.state.get_current_picker(prompt_bufnr)
+  local cwd = current_picker.cwd
+
+  -- Get the file path from the system clipboard
+  local clipboard_content = vim.fn.getreg('+'):gsub("[\n\r]", "")
+
+  if clipboard_content ~= "" then
+    local source_path = clipboard_content
+    local file_name = vim.fn.fnamemodify(source_path, ":t")
+    local target_path = cwd .. "/" .. file_name
+
+    -- Check if the file already exists
+    if vim.fn.filereadable(target_path) == 1 then
+      print("File already exists at destination.")
+      return
+    end
+
+    -- Copy the file
+    vim.fn.system(string.format('cp -r "%s" "%s"', source_path, target_path))
+
+    if vim.v.shell_error == 0 then
+      print("File pasted successfully.")
+      current_picker:refresh()
+    else
+      print("Error pasting file.")
+    end
+  else
+    print("Clipboard is empty or doesn't contain a valid file path.")
+  end
+end
 
 telescope.setup({
   defaults = {
@@ -38,6 +73,15 @@ telescope.setup({
         ["<C-u>"] = false,
         ["<C-d>"] = false,
       },
+      n = {
+        a = fb_actions.create,
+        r = fb_actions.rename,
+        d = fb_actions.remove,
+        c = fb_actions.copy,
+        p = paste_file,
+        h = fb_actions.toggle_hidden,
+        s = fb_actions.toggle_all,
+      }
     },
   },
   extensions = {

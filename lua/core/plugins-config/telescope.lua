@@ -71,4 +71,17 @@ vim.keymap.set("n", "<leader>fg", ":lua require('telescope').extensions.live_gre
   { desc = "[F]ind [G]rep" })
 vim.keymap.set("n", "<leader>fd", builtin.diagnostics, { desc = "[F]ind [D]iagnostics" })
 vim.keymap.set("n", "<leader>fr", builtin.resume, { desc = "[F]ind [R]esume" })
-vim.keymap.set("n", "<space>fb", ":Telescope file_browser<CR>", { desc = "[F]ind [B]rowser" })
+vim.keymap.set("n", "<space>fa", ":Telescope file_browser<CR>", { desc = "[F]ind [B]rowser" })
+vim.keymap.set("n", "<space>fb", function()
+  local current_buffer_file_path = vim.fn.expand("%:p:h")
+  require("telescope").extensions.file_browser.file_browser({
+    path = current_buffer_file_path,
+    cwd = current_buffer_file_path,
+    respect_gitignore = false,
+    hidden = true,
+    grouped = true,
+    previewer = false,
+    initial_mode = "normal",
+    layout_config = { height = 40 }
+  })
+end, { desc = "[F]ile [B]rowser in current directory" })

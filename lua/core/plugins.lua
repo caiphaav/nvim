@@ -3,8 +3,6 @@ require("lazy").setup({
   "tpope/vim-commentary",
   "mattn/emmet-vim",
   "ThePrimeagen/harpoon",
-  "nvim-tree/nvim-tree.lua",
-  "nvim-tree/nvim-web-devicons",
   "nvim-lualine/lualine.nvim",
   "nvim-treesitter/nvim-treesitter",
   -- dart & flutter
@@ -86,10 +84,6 @@ require("lazy").setup({
       "anuvyklack/middleclass",
       "anuvyklack/animation.nvim",
     },
-  },
-  -- file tree
-  {
-    "kyazdani42/nvim-tree.lua", -- Nvim Tree
   },
   {
     "iamcco/markdown-preview.nvim",

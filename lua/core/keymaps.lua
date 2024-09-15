@@ -119,10 +119,6 @@ keymap.set("n", "<S-s>", "<nop>")
 keymap.set("n", "fq", ":q!<CR>")
 keymap.set("n", "fwq", ":wqa<CR>")
 
--- Nvim-tree
-keymap.set("n", "<F2>", ":NvimTreeFindFileToggle<CR>")
-keymap.set("n", "<F1>", ":NvimTreeFocus<CR>")
-
 -- Redo operation
 keymap.set("n", "r", "<C-r>", { noremap = true, silent = true })
 

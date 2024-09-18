@@ -68,8 +68,7 @@ telescope.setup({
       ".vscode/.*",
       "build/.*",
       "gradle/.*",
-      "vendor/.*",   -- Ignoring vendor folder
-      "packages/.*", -- Ignoring Dart packages folder
+      "vendor/.*", -- Ignoring vendor folder
       "%.lock",
       "%.sum",
       "%.mod",

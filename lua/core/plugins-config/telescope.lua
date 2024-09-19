@@ -61,6 +61,50 @@ local function live_grep_with_last_search()
   })
 end
 
+local last_find_files_query = ""
+
+local function find_files_with_last_query()
+  local builtin = require("telescope.builtin")
+  local actions = require("telescope.actions")
+  local action_state = require("telescope.actions.state")
+
+  builtin.find_files({
+    default_text = last_find_files_query,
+    attach_mappings = function(prompt_bufnr, map)
+      local function update_query_and_continue(fallback)
+        last_find_files_query = action_state.get_current_line()
+        if type(fallback) == "function" then
+          fallback()
+        else
+          actions.close(prompt_bufnr)
+        end
+      end
+
+      -- Override all actions to update the query before continuing
+      actions.select_default:replace(function()
+        update_query_and_continue(actions.select_default)
+      end)
+      actions.select_horizontal:replace(function()
+        update_query_and_continue(actions.select_horizontal)
+      end)
+      actions.select_vertical:replace(function()
+        update_query_and_continue(actions.select_vertical)
+      end)
+      actions.select_tab:replace(function()
+        update_query_and_continue(actions.select_tab)
+      end)
+
+      -- Update query on normal mode exit
+      map("n", "<esc>", function() update_query_and_continue(actions.close) end)
+      map("n", "q", function() update_query_and_continue(actions.close) end)
+
+      -- Update query on insert mode exit
+      map("i", "<C-c>", function() update_query_and_continue(actions.close) end)
+
+      return true
+    end
+  })
+end
 
 telescope.setup({
   defaults = {
@@ -134,7 +178,7 @@ vim.keymap.set("n", "<leader>/", function()
   })
 end, { desc = "[/] Fuzzily search in current buffer" })
 
-vim.keymap.set("n", "<leader>ff", builtin.find_files, { desc = "[F]ind [F]iles" })
+vim.keymap.set("n", "<leader>ff", find_files_with_last_query, { desc = "[F]ind [F]iles (with last path)" })
 vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "[F]ind [H]elp" })
 vim.keymap.set("n", "<leader>fw", builtin.grep_string, { desc = "[F]ind current [W]ord" })
 vim.keymap.set("n", "<leader>fg", live_grep_with_last_search, { desc = "[F]ind [G]rep (with last search)" })

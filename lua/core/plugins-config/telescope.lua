@@ -36,6 +36,7 @@ local function paste_file(prompt_bufnr)
   end
 end
 
+local last_file_browser_path = ""
 local function open_telescope_file_browser()
   local current_buffer_file_path = vim.fn.expand("%:p:h")
   require("telescope").extensions.file_browser.file_browser({
@@ -45,8 +46,26 @@ local function open_telescope_file_browser()
     hidden = true,
     grouped = true,
     previewer = false,
-    initial_mode = "normal",
-    layout_config = { height = 40 }
+    initial_mode = "insert",
+    layout_config = { height = 40 },
+    default_text = last_file_browser_path,
+    on_input_filter_cb = function(input)
+      last_file_browser_path = input
+      return { prompt = input }
+    end
+  })
+end
+
+local last_file_browser_root_path = ""
+local function open_telescope_file_browser_root()
+  require("telescope").extensions.file_browser.file_browser({
+    initial_mode = "insert",
+    layout_config = { height = 40 },
+    default_text = last_file_browser_root_path,
+    on_input_filter_cb = function(input)
+      last_file_browser_root_path = input
+      return { prompt = input }
+    end
   })
 end
 
@@ -150,6 +169,6 @@ vim.keymap.set("n", "<leader>fw", builtin.grep_string, { desc = "[F]ind current 
 vim.keymap.set("n", "<leader>fg", live_grep_with_last_search, { desc = "[F]ind [G]rep (with last search)" })
 vim.keymap.set("n", "<leader>fd", builtin.diagnostics, { desc = "[F]ind [D]iagnostics" })
 vim.keymap.set("n", "<leader>fr", builtin.resume, { desc = "[F]ind [R]esume" })
-vim.keymap.set("n", "<space>fa", ":Telescope file_browser<CR>", { desc = "[F]ind [B]rowser" })
+vim.keymap.set("n", "<space>fa", open_telescope_file_browser_root, { desc = "[F]ind [B]rowser" })
 vim.keymap.set("n", "f", open_telescope_file_browser, { desc = "[F]ile [B]rowser in current directory" })
 vim.keymap.set("n", "<space>fb", open_telescope_file_browser, { desc = "[F]ile [B]rowser in current directory" })

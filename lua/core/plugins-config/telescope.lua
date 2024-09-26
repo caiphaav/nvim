@@ -92,35 +92,14 @@ local function find_files_with_last_query()
 end
 
 telescope.setup({
+
   defaults = {
+
     file_ignore_patterns = {
       "node_modules/.*",
       ".git/.*",
-      ".dist/.*",
-      "yarn.lock",
-      "*-lock.*",
-      "pnpm-lock.yaml",
-      "package-lock.json",
-      ".output/.*",
-      ".dart_tool/.*",
-      ".github/.*",
-      ".gradle/.*",
       ".idea/.*",
       ".vscode/.*",
-      "build/.*",
-      "gradle/.*",
-      "vendor/.*", -- Ignoring vendor folder
-      "%.lock",
-      "%.sum",
-      "%.mod",
-      "%.apk",
-      "%.png",
-      "%.jpg",
-      "%.jpeg",
-      "%.webp",
-      "%.svg",
-      "%.otf",
-      "%.ttf",
     },
     mappings = {
       i = {
@@ -132,6 +111,7 @@ telescope.setup({
         r = fb_actions.rename,
         d = fb_actions.remove,
         c = fb_actions.copy,
+        y = fb_actions.copy,
         p = paste_file,
         h = fb_actions.toggle_hidden,
         s = fb_actions.toggle_all,

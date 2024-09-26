@@ -17,7 +17,7 @@ vim.wo.number = true
 opt.relativenumber = true
 opt.shell = "zsh"
 opt.updatetime = 100
-opt.wrap = false -- No Wrap lines
+opt.wrap = false      -- No Wrap lines
 opt.ignorecase = true -- Case insensitive searching UNLESS /C or capital in search
 opt.smartcase = true
 opt.swapfile = false
@@ -50,9 +50,9 @@ vim.o.clipboard = "unnamedplus"
 -- Highlight on yanking
 local highlight_group = vim.api.nvim_create_augroup("YankHighlight", { clear = true })
 vim.api.nvim_create_autocmd("TextYankPost", {
-	callback = function()
-		vim.highlight.on_yank()
-	end,
-	group = highlight_group,
-	pattern = "*",
+  callback = function()
+    vim.highlight.on_yank()
+  end,
+  group = highlight_group,
+  pattern = "*",
 })

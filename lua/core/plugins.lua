@@ -14,14 +14,6 @@ require("lazy").setup({
       'stevearc/dressing.nvim', -- optional for vim.ui.select
     },
   },
-  {
-    "folke/which-key.nvim",
-    event = "VeryLazy",
-    init = function()
-      vim.o.timeout = true
-      vim.o.timeoutlen = 300
-    end,
-  },
   -- copilot
   {
     "supermaven-inc/supermaven-nvim",

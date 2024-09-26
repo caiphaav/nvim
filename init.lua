@@ -15,6 +15,16 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+local function flutter_hot_reload()
+  vim.fn.system('kill -s USR1 "$(pgrep -f flutter_tools.snapshot\\ run)" &> /dev/null')
+end
+
+-- Autocommand for hot-reloading on save
+vim.api.nvim_create_autocmd('BufWritePost', {
+  pattern = '*/lib/*.dart',
+  callback = flutter_hot_reload,
+})
+
 require("core.options")
 require("core.keymaps")
 require("core.plugins")

@@ -9,7 +9,6 @@ local servers = {
   "tailwindcss",
   "gopls",
   "ast_grep",
-  "dartls",
   "html",
   "cssls",
   "intelephense",

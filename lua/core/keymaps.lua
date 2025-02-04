@@ -1,11 +1,14 @@
 local keymap = vim.keymap
-local api = vim.api
 
--- Leader key
+
+-- Set leader keys
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
--- function to close buffer
+--------------------------------------------------------------------
+-- Buffer Management
+--------------------------------------------------------------------
+-- Smart buffer close with Alpha fallback
 local function smart_close()
   local buffers = vim.fn.getbufinfo({ buflisted = 1 })
   if #buffers == 1 then
@@ -19,62 +22,53 @@ end
 
 keymap.set("n", "<C-q>", smart_close, { noremap = true, silent = true, desc = "Close buffer or return to Alpha" })
 
--- Split window
-keymap.set("n", "hh", ":belowright split new<CR>", { silent = true })
-keymap.set("n", "ss", ":below vsplit new<CR>", { silent = true })
+--------------------------------------------------------------------
+-- Window Management
+--------------------------------------------------------------------
+-- Split windows
+keymap.set("n", "hh", ":split<CR>", {
+  desc = "Horizontal split",
+  silent = true
+})
 
--- Delete/Move/Yank until line start/end
--- keymap.set("n", "del", "d$", { silent = true })
-keymap.set("n", "del", function()
+keymap.set("n", "ss", ":vsplit<CR>", {
+  desc = "Vertical split",
+  silent = true
+})
+
+-- Window navigation
+keymap.set("n", "<S-Left>", "<C-w>h", { desc = "Window left" })
+keymap.set("n", "<S-Down>", "<C-w>j", { desc = "Window down" })
+keymap.set("n", "<S-Up>", "<C-w>k", { desc = "Window up" })
+keymap.set("n", "<S-Right>", "<C-w>l", { desc = "Window right" })
+
+--------------------------------------------------------------------
+-- Line Operations
+--------------------------------------------------------------------
+-- Delete/Yank line segments (changed to <leader> prefixes)
+keymap.set("n", "<leader>dl", function()
   vim.cmd('normal! "*d$')
-end, { silent = true, noremap = true, desc = "Delete to end of line and copy to clipboard" })
-keymap.set("n", "dsl", function()
+end, {
+  desc = "Delete to line end (clipboard)",
+  silent = true
+})
+
+keymap.set("n", "<leader>ds", function()
   vim.cmd('normal! "*d^')
-end, { silent = true, noremap = true, desc = "Delete to start of line and copy to clipboard" })
-keymap.set("n", "mel", "<S-$>", { silent = true })
-keymap.set("n", "msl", "<S-^>", { silent = true })
-keymap.set("n", "yel", "y$", { silent = true })
-keymap.set("n", "ysl", "y^", { silent = true })
+end, {
+  desc = "Delete to line start (clipboard)",
+  silent = true
+})
 
--- Generic function to replace content from the cursor position to the end or start of the line with yanked content
-local function replace_with_yanked_content(option)
-  -- Get the current line number and cursor column
-  local current_line_number = vim.fn.line('.')
-  local current_col = vim.fn.col('.')
+-- Move/Yank line segments
+keymap.set("n", "<leader>ml", "$", { desc = "Jump to line end" })
+keymap.set("n", "<leader>ms", "^", { desc = "Jump to line start" })
+keymap.set("n", "<leader>yl", "y$", { desc = "Yank to line end" })
+keymap.set("n", "<leader>ys", "y^", { desc = "Yank to line start" })
 
-  -- Get the yanked content from the clipboard
-  local yanked_content = vim.fn.getreg('+') -- Using '+' to get the clipboard content
-
-  -- Check if the clipboard is empty
-  if yanked_content == nil or yanked_content == '' then
-    print("No content in the clipboard")
-    return
-  end
-
-  -- Get the current line content
-  local line_content = vim.fn.getline(current_line_number)
-
-  local new_line_content
-  if option == 'end' then
-    -- Replace the content from the cursor to the end of the line
-    new_line_content = string.sub(line_content, 1, current_col - 1) .. yanked_content
-    print("Replaced from cursor to end of line with yanked content")
-  elseif option == 'start' then
-    -- Replace the content from the start of the line to the cursor
-    new_line_content = yanked_content .. string.sub(line_content, current_col)
-    print("Replaced from start of line to cursor with yanked content")
-  else
-    print("Invalid option")
-    return
-  end
-
-  vim.fn.setline(current_line_number, new_line_content)
-end
-
-keymap.set("n", "yre", function() replace_with_yanked_content('end') end, { silent = true })
-keymap.set("n", "yrs", function() replace_with_yanked_content('start') end, { silent = true })
-
--- Delete until first symbol
+--------------------------------------------------------------------
+-- Delete Until Symbol
+--------------------------------------------------------------------
 local function delete_until_symbol()
   local symbol = vim.fn.input("Enter symbol: ")
   if symbol == "" then
@@ -118,34 +112,53 @@ end
 
 keymap.set("n", "ds", delete_until_symbol, { silent = true })
 
--- Change window
-keymap.set("", "<S-Left>", "<C-w>h")
-keymap.set("", "<S-Up>", "<C-w>k")
-keymap.set("", "<S-Down>", "<C-w>j")
-keymap.set("", "<S-Right>", "<C-w>l")
+--------------------------------------------------------------------
+-- File Operations
+--------------------------------------------------------------------
+local function safe_save()
+  vim.cmd("silent! write")
+end
+-- Save mappings
+keymap.set("n", "<C-s>", safe_save, { desc = "Save file" })
+keymap.set("i", "<C-s>", "<Esc>:w<CR>", { desc = "Save file" })
+-- Quit mappings
+keymap.set("n", "<leader>fq", "<cmd>q!<CR>", { desc = "Force quit" })
+keymap.set("n", "<leader>fwq", "<cmd>wqa<CR>", { desc = "Save and quit all" })
 
--- File
-keymap.set("n", "<C-s>", ":wa<CR>")
-keymap.set("n", "<S-s>", "<nop>")
-keymap.set("n", "fq", ":q!<CR>")
-keymap.set("n", "fwq", ":wqa<CR>")
-
--- Redo operation
-keymap.set("n", "r", "<C-r>", { noremap = true, silent = true })
 
 -- Select all
-api.nvim_set_keymap("n", "<C-a>", "ggVG", { noremap = true, silent = true })
+keymap.set("n", "<C-a>", "ggVG", {
+  noremap = true,
+  silent = true,
+  desc = "Select entire buffer"
+})
 
--- Jump up/down
-api.nvim_set_keymap('n', '<C-Up>', '10k', { noremap = true, silent = true })
-api.nvim_set_keymap('n', '<C-Down>', '10j', { noremap = true, silent = true })
-api.nvim_set_keymap('n', '<D-Up>', '10k', { noremap = true, silent = true })
-api.nvim_set_keymap('n', '<D-Down>', '10j', { noremap = true, silent = true })
+-- Scrolling (centered jumps)
+keymap.set("n", "<C-Up>", "10kzz", { desc = "Scroll up 10 lines (centered)" })
+keymap.set("n", "<C-Down>", "10jzz", { desc = "Scroll down 10 lines (centered)" })
+-- Horizontal navigation with centered jumps
+keymap.set("n", "<C-Left>", "20hzz", { desc = "Move left 10 chars (centered)" })
+keymap.set("n", "<C-Right>", "20lzz", { desc = "Move right 10 chars (centered)" })
 
--- Save operation
--- MacOS Cmd + s Insert and Normal mode
-api.nvim_set_keymap("i", "<C-s>", "<Esc>:w<CR>", { noremap = true, silent = true })
-api.nvim_set_keymap("n", "<C-s>", "<Esc>:w<CR>", { noremap = true, silent = true })
--- Linux/Windows Ctrl + S
-api.nvim_set_keymap("i", "<D-s>", "<Esc>:w<CR>", { noremap = true, silent = true })
-api.nvim_set_keymap("n", "<D-s>", "<Esc>:w<CR>", { noremap = true, silent = true })
+--------------------------------------------------------------------
+-- Line Operations
+--------------------------------------------------------------------
+-- Delete/Yank line segments (now under <leader> prefix)
+keymap.set("n", "del", function()
+  vim.cmd('normal! "*d$')
+end, {
+  silent = true,
+  desc = "Delete to line end (clipboard)"
+})
+
+keymap.set("n", "dsl", function()
+  vim.cmd('normal! "*d^')
+end, {
+  silent = true,
+  desc = "Delete to line start (clipboard)"
+})
+
+--------------------------------------------------------------------
+-- Redo/Undo
+--------------------------------------------------------------------
+keymap.set("n", "r", "<C-r>", { noremap = true, silent = true })

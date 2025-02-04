@@ -2,29 +2,45 @@ local mason_lspconfig = require("mason-lspconfig")
 local lspconfig = require("lspconfig")
 local cmp_nvim_lsp = require("cmp_nvim_lsp")
 
--- List of servers to install and configure
 local servers = {
-  "lua_ls",
-  "dartls",
-  "tsserver",
-  "tailwindcss",
-  "gopls",
-  "ast_grep",
-  "html",
-  "cssls",
-  "intelephense",
-  "sqlls",
-  "terraformls",
-  "biome",
-  "zls",
+  "lua_ls",      -- Lua
+  -- "dartls",      -- Dart/Flutter
+  "tsserver",    -- TypeScript/JavaScript
+  "tailwindcss", -- Tailwind CSS
+  "gopls",       -- Go
+  "html",        -- HTML
+  "cssls",       -- CSS
+  "sqlls",       -- SQL
+  "biome",       -- Modern JS/TS alternative (combines formatter + linter)
+  "dockerls",    -- Dockerfiles
+  "helm_ls",     -- Helm charts
 }
 
+-- Improved Mason configuration
 mason_lspconfig.setup({
   ensure_installed = servers,
   automatic_installation = true,
 })
 
--- Function to switch to the previous file
+-- Enhanced capabilities with additional features
+local capabilities = vim.tbl_deep_extend(
+  "force",
+  cmp_nvim_lsp.default_capabilities(),
+  {
+    textDocument = {
+      documentHighlight = {
+        dynamicRegistration = false
+      },
+      foldingRange = {
+        dynamicRegistration = false
+      }
+    },
+    workspace = {
+      workspaceFolders = true
+    }
+  }
+)
+
 local function switch_to_previous_file()
   local current_buf = vim.api.nvim_get_current_buf()
   local alternate_buf = vim.fn.bufnr('#')
@@ -36,78 +52,203 @@ local function switch_to_previous_file()
   end
 end
 
--- Generic LSP settings
+-- Better organized LSP keymaps
+local on_attach = function(_, bufnr)
+  -- Enable omnifunc
+  vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
+
+  -- Create a helper function for buffer-local keymaps
+  local bufmap = function(mode, lhs, rhs, desc)
+    vim.keymap.set(mode, lhs, rhs, {
+      buffer = bufnr,
+      noremap = true,
+      silent = true,
+      desc = desc,
+    })
+  end
+
+  -- Navigation
+  bufmap("n", "gd", vim.lsp.buf.definition, "Go to definition")
+  bufmap("n", "gD", vim.lsp.buf.declaration, "Go to declaration")
+  bufmap("n", "gr", vim.lsp.buf.references, "Find references")
+  bufmap("n", "gi", vim.lsp.buf.implementation, "Go to implementation")
+  bufmap("n", "K", vim.lsp.buf.hover, "Show documentation")
+  bufmap("n", "<C-k>", vim.lsp.buf.signature_help, "Signature help")
+  vim.keymap.set("n", "<C-p>", switch_to_previous_file,
+    vim.tbl_extend("force", { noremap = true, silent = true, buffer = bufnr }, { desc = "Switch to previous file" }))
+
+  -- Code actions
+  bufmap("n", "<leader>ca", vim.lsp.buf.code_action, "Code actions")
+  bufmap("n", "<leader>rn", vim.lsp.buf.rename, "Rename symbol")
+
+  -- Workspace
+  bufmap("n", "<leader>wa", vim.lsp.buf.add_workspace_folder, "Add workspace folder")
+  bufmap("n", "<leader>wr", vim.lsp.buf.remove_workspace_folder, "Remove workspace folder")
+  bufmap("n", "<leader>wl", function()
+    print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+  end, "List workspace folders")
+
+  -- Formatting
+  bufmap("n", "<leader>f", function()
+    vim.lsp.buf.format({ async = true, timeout_ms = 5000 })
+  end, "Format buffer")
+
+  -- Diagnostics
+  bufmap("n", "[d", vim.diagnostic.goto_prev, "Previous diagnostic")
+  bufmap("n", "]d", vim.diagnostic.goto_next, "Next diagnostic")
+  bufmap("n", "<leader>d", vim.diagnostic.open_float, "Show diagnostic")
+
+  -- Type information
+  bufmap("n", "<leader>td", vim.lsp.buf.type_definition, "Type definition")
+end
+
+-- Base LSP configuration
 local lsp_defaults = {
+  capabilities = capabilities,
+  on_attach = on_attach,
   flags = {
     debounce_text_changes = 150,
   },
-  capabilities = cmp_nvim_lsp.default_capabilities(
-    vim.lsp.protocol.make_client_capabilities()
-  ),
-  on_attach = function(client, bufnr)
-    -- Enable completion triggered by <c-x><c-o>
-    vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
-
-    -- Keybindings for LSP
-    local opts = { noremap = true, silent = true, buffer = bufnr }
-    vim.keymap.set("n", "gd", vim.lsp.buf.definition, vim.tbl_extend("force", opts, { desc = "Go to definition" }))
-    vim.keymap.set("n", "gh", vim.lsp.buf.hover, vim.tbl_extend("force", opts, { desc = "Show hover information" }))
-    vim.keymap.set("n", "gi", vim.lsp.buf.implementation,
-      vim.tbl_extend("force", opts, { desc = "Go to implementation" }))
-    vim.keymap.set("n", "<space>wa", vim.lsp.buf.add_workspace_folder,
-      vim.tbl_extend("force", opts, { desc = "Add workspace folder" }))
-    vim.keymap.set("n", "<space>wr", vim.lsp.buf.remove_workspace_folder,
-      vim.tbl_extend("force", opts, { desc = "Remove workspace folder" }))
-    vim.keymap.set("n", "<space>wl", function()
-      print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-    end, vim.tbl_extend("force", opts, { desc = "List workspace folders" }))
-    vim.keymap.set("n", "<space>D", vim.lsp.buf.type_definition,
-      vim.tbl_extend("force", opts, { desc = "Go to type definition" }))
-    vim.keymap.set("n", "<space>rn", vim.lsp.buf.rename, vim.tbl_extend("force", opts, { desc = "Rename symbol" }))
-    vim.keymap.set({ "n", "v" }, "<space>ca", vim.lsp.buf.code_action,
-      vim.tbl_extend("force", opts, { desc = "Code action" }))
-    vim.keymap.set("n", "gr", vim.lsp.buf.references, vim.tbl_extend("force", opts, { desc = "Find references" }))
-    vim.keymap.set("n", "<space>f", function()
-      vim.lsp.buf.format({ async = true })
-    end, vim.tbl_extend("force", opts, { desc = "Format buffer" }))
-    -- Add keybinding for switching to the previous file
-    vim.keymap.set("n", "<C-p>", switch_to_previous_file,
-      vim.tbl_extend("force", opts, { desc = "Switch to previous file" }))
-  end
 }
 
--- Merge user-defined lsp_defaults with the default capabilities
-lspconfig.util.default_config = vim.tbl_deep_extend(
-  "force",
-  lspconfig.util.default_config,
-  lsp_defaults
-)
-
--- Server-specific settings
+-- Server-specific configurations
 local server_settings = {
   lua_ls = {
     settings = {
       Lua = {
+        runtime = {
+          version = "LuaJIT",
+        },
         diagnostics = {
           globals = { "vim" },
         },
         workspace = {
-          library = {
-            [vim.fn.expand("$VIMRUNTIME/lua")] = true,
-            [vim.fn.stdpath("config") .. "/lua"] = true,
-          },
+          library = vim.api.nvim_get_runtime_file("", true),
+          checkThirdParty = false,
+        },
+        telemetry = {
+          enable = false,
         },
       },
     },
   },
-  -- Add other server-specific settings here
+
+  tsserver = {
+    init_options = {
+      maxTsServerMemory = 4096,
+      preferences = {
+        includeInlayParameterNameHints = "all",
+        includeInlayParameterNameHintsWhenArgumentMatchesName = true,
+        includeInlayFunctionParameterTypeHints = true,
+        includeInlayVariableTypeHints = true,
+        includeCompletionsForModuleExports = true,
+        includeCompletionsWithInsertText = true,
+      }
+    }
+  },
+
+  tailwindcss = {
+    filetypes = {
+      "html",
+      "css",
+      "javascript",
+      "javascriptreact",
+      "typescript",
+      "typescriptreact",
+      "svelte",
+      "vue",
+      "templ",
+    },
+    init_options = {
+      userLanguages = {
+        templ = "html",
+      },
+    },
+  },
+
+  gopls = {
+    settings = {
+      gopls = {
+        analyses = {
+          fieldalignment = true,
+          nilness = true,
+          unusedparams = true,
+        },
+        staticcheck = true,
+        gofumpt = true,
+        hints = {
+          assignVariableTypes = true,
+          compositeLiteralFields = true,
+          constantValues = true,
+          functionTypeParameters = true,
+          parameterNames = true,
+          rangeVariableTypes = true,
+        },
+      },
+    },
+  },
+
+  dartls = {
+    init_options = {
+      closingLabels = true,
+      flutterOutline = true,
+      onlyAnalyzeProjectsWithOpenFiles = true,
+      outline = true,
+      suggestFromUnimportedLibraries = true,
+    },
+    settings = {
+      dart = {
+        completeFunctionCalls = true,
+        showTodos = true,
+        updateImportsOnRename = true,
+      }
+    }
+  },
+
+  biome = {
+    filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
+    single_file_support = true,
+  },
+
+  helm_ls = {
+    filetypes = { "helm" },
+    settings = {
+      helm = {
+        lint = {
+          enable = true,
+        },
+        template = {
+          enable = true,
+        },
+      }
+    }
+  },
+
+  dockerls = {
+    settings = {
+      docker = {
+        languageserver = {
+          formatter = {
+            ignorePaths = { "node_modules" },
+          },
+        }
+      }
+    }
+  }
 }
 
--- Set up each server
-for _, server in ipairs(servers) do
-  local opts = server_settings[server] or {}
-  opts = vim.tbl_deep_extend("force", lsp_defaults, opts)
-  lspconfig[server].setup(opts)
-end
+-- Setup servers with merged configurations
+mason_lspconfig.setup_handlers({
+  function(server_name)
+    local opts = vim.tbl_deep_extend("force", lsp_defaults, server_settings[server_name] or {})
+    lspconfig[server_name].setup(opts)
+  end
+})
 
--- Additional auto-commands or settings can be added here
+-- Format on save for specific filetypes
+vim.api.nvim_create_autocmd("BufWritePre", {
+  pattern = { "*.lua", "*.go", "*.dart", "*.ts", "*.js", "*.css", "*.html" },
+  callback = function()
+    vim.lsp.buf.format({ async = false, timeout_ms = 2000 })
+  end
+})

@@ -50,14 +50,13 @@ require("lazy").setup({
       }
     end,
   },
-  -- {
-  --   "rcarriga/nvim-dap-ui",
-  --   dependencies = {
-  --     "mfussenegger/nvim-dap",
-  --     "nvim-neotest/nvim-nio"
-  --   },
-  --   opts = { layouts = { { elements = { "scopes" }, size = 0.3 } } },
-  -- },
+  {
+    "rcarriga/nvim-dap-ui",
+    dependencies = {
+      "mfussenegger/nvim-dap",
+      "nvim-neotest/nvim-nio"
+    },
+  },
 
   --------------------------------------------------------------------------------
   -- UI & Appearance
@@ -115,11 +114,6 @@ require("lazy").setup({
     config = function()
       require("telescope").load_extension("projects")
     end,
-  },
-  {
-    "folke/which-key.nvim",
-    event = "VeryLazy",
-    config = true,
   },
 
   --------------------------------------------------------------------------------

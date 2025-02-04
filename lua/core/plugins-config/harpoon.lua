@@ -30,5 +30,3 @@ require("harpoon").setup({
 
 vim.keymap.set("n", "X", require("harpoon.mark").add_file)
 vim.keymap.set("n", "S", require("harpoon.ui").toggle_quick_menu)
-vim.keymap.set("n", "<leader>hn", require("harpoon.ui").nav_next)
-vim.keymap.set("n", "<leader>hp", require("harpoon.ui").nav_prev)

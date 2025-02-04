@@ -124,6 +124,14 @@ keymap.set("i", "<C-s>", "<Esc>:w<CR>", { desc = "Save file" })
 -- Quit mappings
 keymap.set("n", "<leader>fq", "<cmd>q!<CR>", { desc = "Force quit" })
 keymap.set("n", "<leader>fwq", "<cmd>wqa<CR>", { desc = "Save and quit all" })
+-- Find files
+keymap.set("n", "f", function()
+  require("telescope.builtin").find_files({
+    hidden = true,
+    no_ignore = false,
+    no_ignore_parent = false,
+  })
+end, { desc = "Find files (Telescope)" })
 
 
 -- Select all

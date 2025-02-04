@@ -5,6 +5,7 @@ local cmp_nvim_lsp = require("cmp_nvim_lsp")
 -- List of servers to install and configure
 local servers = {
   "lua_ls",
+  "dartls",
   "tsserver",
   "tailwindcss",
   "gopls",

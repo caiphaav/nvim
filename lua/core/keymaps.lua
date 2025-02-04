@@ -136,6 +136,12 @@ keymap.set("n", "r", "<C-r>", { noremap = true, silent = true })
 -- Select all
 api.nvim_set_keymap("n", "<C-a>", "ggVG", { noremap = true, silent = true })
 
+-- Jump up/down
+api.nvim_set_keymap('n', '<C-Up>', '10k', { noremap = true, silent = true })
+api.nvim_set_keymap('n', '<C-Down>', '10j', { noremap = true, silent = true })
+api.nvim_set_keymap('n', '<D-Up>', '10k', { noremap = true, silent = true })
+api.nvim_set_keymap('n', '<D-Down>', '10j', { noremap = true, silent = true })
+
 -- Save operation
 -- MacOS Cmd + s Insert and Normal mode
 api.nvim_set_keymap("i", "<C-s>", "<Esc>:w<CR>", { noremap = true, silent = true })

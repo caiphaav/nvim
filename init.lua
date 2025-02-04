@@ -16,7 +16,10 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 local function flutter_hot_reload()
-  vim.fn.system('kill -s USR1 "$(pgrep -f flutter_tools.snapshot\\ run)" &> /dev/null')
+  local pid = vim.fn.system('pgrep -f "dart --enable-vm-service.*run"'):gsub('\n', '')
+  if pid ~= "" then
+    vim.fn.system('kill -SIGUSR1 ' .. pid)
+  end
 end
 
 -- Autocommand for hot-reloading on save

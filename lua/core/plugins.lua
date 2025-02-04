@@ -7,20 +7,61 @@ require("lazy").setup({
   "nvim-treesitter/nvim-treesitter",
   -- dart & flutter
   {
-    'akinsho/flutter-tools.nvim',
+    "dart-lang/dart-vim-plugin",
+    ft = "dart",
+  },
+  {
+    "akinsho/flutter-tools.nvim",
     lazy = false,
     dependencies = {
-      'nvim-lua/plenary.nvim',
-      'stevearc/dressing.nvim', -- optional for vim.ui.select
+      "nvim-lua/plenary.nvim",
+      "stevearc/dressing.nvim",
     },
-  },
-  -- copilot
-  {
-    "supermaven-inc/supermaven-nvim",
     config = function()
-      require("supermaven-nvim").setup({})
+      require("flutter-tools").setup({
+        debugger = {
+          enabled = true,
+          run_via_dap = true,
+        },
+        outline = { auto_open = false },
+        dev_log = { auto_open = false },
+        lsp = {
+          color = {
+            enabled = true,
+            background = true,
+          },
+          settings = {
+            showTodos = true,
+            renameFilesWithClasses = "prompt",
+          },
+        },
+      })
     end,
   },
+  {
+    "mfussenegger/nvim-dap",
+    config = function()
+      local dap = require("dap")
+      dap.configurations.dart = {
+        {
+          type = "dart",
+          request = "launch",
+          name = "Launch Flutter",
+          dartSdkPath = vim.fn.expand("$HOME/flutter/bin/cache/dart-sdk/"),
+          flutterSdkPath = vim.fn.expand("$HOME/flutter"),
+          program = "${workspaceFolder}/lib/main.dart",
+          cwd = "${workspaceFolder}",
+        }
+      }
+    end,
+  },
+  -- copilot
+  -- {
+  --   "supermaven-inc/supermaven-nvim",
+  --   config = function()
+  --     require("supermaven-nvim").setup({})
+  --   end,
+  -- },
   -- initial screen
   {
     "goolord/alpha-nvim",
@@ -42,9 +83,6 @@ require("lazy").setup({
   -- completion
   "hrsh7th/nvim-cmp",
   "hrsh7th/cmp-nvim-lsp",
-  "L3MON4D3/LuaSnip",
-  "saadparwaiz1/cmp_luasnip",
-  "rafamadriz/friendly-snippets",
   "williamboman/mason.nvim",
   "williamboman/mason-lspconfig.nvim",
   "neovim/nvim-lspconfig",

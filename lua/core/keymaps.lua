@@ -66,6 +66,10 @@ keymap.set("n", "<leader>ms", "^", { desc = "Jump to line start" })
 keymap.set("n", "<leader>yl", "y$", { desc = "Yank to line end" })
 keymap.set("n", "<leader>ys", "y^", { desc = "Yank to line start" })
 
+-- Jump to line start/end
+keymap.set("n", "mel", "<S-$>", { silent = true })
+keymap.set("n", "msl", "<S-^>", { silent = true })
+
 --------------------------------------------------------------------
 -- Delete Until Symbol
 --------------------------------------------------------------------

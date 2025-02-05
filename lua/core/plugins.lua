@@ -110,6 +110,70 @@ require("lazy").setup({
   },
 
   --------------------------------------------------------------------------------
+  -- Git integration
+  --------------------------------------------------------------------------------
+  -- {
+  --   "sindrets/diffview.nvim",
+  --   dependencies = "nvim-lua/plenary.nvim",
+  --   config = function()
+  --     require("diffview").setup({
+  --       view = {
+  --         merge_tool = {
+  --           layout = "diff3_mixed", -- 3-way merge layout
+  --         },
+  --       },
+  --     })
+  --   end,
+  -- },
+  {
+    "lewis6991/gitsigns.nvim",
+    event = "BufReadPre",
+    config = function()
+      require("gitsigns").setup({
+        signs = {
+          add = { text = "+" },
+          change = { text = "~" },
+          delete = { text = "_" },
+          topdelete = { text = "‾" },
+          changedelete = { text = "~" },
+        },
+        on_attach = function(bufnr)
+          local gs = package.loaded.gitsigns
+
+          -- Git blame shortcut
+          vim.keymap.set("n", "<leader>gb", function()
+            gs.blame_line({ full = true }) -- Show full blame info
+          end, { buffer = bufnr, desc = "Git blame line" })
+          vim.keymap.set("n", "gb", function()
+            gs.toggle_current_line_blame() -- Toggle blame
+          end, { buffer = bufnr, desc = "Git blame toggle" })
+
+
+          -- Navigation between hunks
+          vim.keymap.set("n", "]c", function()
+            if vim.wo.diff then return "]c" end
+            vim.schedule(function() gs.next_hunk() end)
+            return "<Ignore>"
+          end, { buffer = bufnr, expr = true, desc = "Next hunk" })
+
+          vim.keymap.set("n", "[c", function()
+            if vim.wo.diff then return "[c" end
+            vim.schedule(function() gs.prev_hunk() end)
+            return "<Ignore>"
+          end, { buffer = bufnr, expr = true, desc = "Previous hunk" })
+
+          -- Stage/reset hunks
+          vim.keymap.set("n", "<leader>gs", gs.stage_hunk, { buffer = bufnr, desc = "Stage hunk" })
+          vim.keymap.set("n", "<leader>gr", gs.reset_hunk, { buffer = bufnr, desc = "Reset hunk" })
+
+          -- Preview hunk changes
+          vim.keymap.set("n", "<leader>gp", gs.preview_hunk, { buffer = bufnr, desc = "Preview hunk" })
+        end,
+      })
+    end,
+  },
+
+  --------------------------------------------------------------------------------
   -- Editing & Code Actions
   --------------------------------------------------------------------------------
   {

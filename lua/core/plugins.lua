@@ -112,19 +112,37 @@ require("lazy").setup({
   --------------------------------------------------------------------------------
   -- Git integration
   --------------------------------------------------------------------------------
-  -- {
-  --   "sindrets/diffview.nvim",
-  --   dependencies = "nvim-lua/plenary.nvim",
-  --   config = function()
-  --     require("diffview").setup({
-  --       view = {
-  --         merge_tool = {
-  --           layout = "diff3_mixed", -- 3-way merge layout
-  --         },
-  --       },
-  --     })
-  --   end,
-  -- },
+  {
+    'sindrets/diffview.nvim',
+    dependencies = 'nvim-lua/plenary.nvim',
+    config = function()
+      require('diffview').setup({
+        enhanced_diff_hl = true, -- Enhanced diff highlighting
+        icons = {
+          folder_closed = "",
+          folder_open = "",
+        },
+        signs = {
+          fold_closed = "",
+          fold_open = "",
+          done = "✓",
+        },
+        view = {
+          -- Default file panel layout
+          default = {
+            layout = "diff2_horizontal",
+          },
+          merge_tool = {
+            layout = "diff3_horizontal", -- Show three-way diff for merge conflicts
+            disable_diagnostics = true,  -- Disable diagnostics for merge conflicts
+          },
+        },
+        keymaps = {
+          disable_defaults = false,
+        },
+      })
+    end
+  },
   {
     "lewis6991/gitsigns.nvim",
     event = "BufReadPre",

@@ -12,8 +12,6 @@ local servers = {
   "cssls",       -- CSS
   "sqlls",       -- SQL
   "biome",       -- Modern JS/TS alternative (combines formatter + linter)
-  "dockerls",    -- Dockerfiles
-  "helm_ls",     -- Helm charts
 }
 
 -- Improved Mason configuration
@@ -209,32 +207,6 @@ local server_settings = {
     filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
     single_file_support = true,
   },
-
-  helm_ls = {
-    filetypes = { "helm" },
-    settings = {
-      helm = {
-        lint = {
-          enable = true,
-        },
-        template = {
-          enable = true,
-        },
-      }
-    }
-  },
-
-  dockerls = {
-    settings = {
-      docker = {
-        languageserver = {
-          formatter = {
-            ignorePaths = { "node_modules" },
-          },
-        }
-      }
-    }
-  }
 }
 
 -- Setup servers with merged configurations

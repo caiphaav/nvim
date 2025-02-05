@@ -94,6 +94,8 @@ require("lazy").setup({
   --------------------------------------------------------------------------------
   {
     "ThePrimeagen/harpoon",
+    branch = "harpoon2",
+    commit = 'e76cb03',
     dependencies = { "nvim-lua/plenary.nvim" }
   },
   {
@@ -103,17 +105,8 @@ require("lazy").setup({
       "nvim-telescope/telescope-file-browser.nvim",
       "debugloop/telescope-undo.nvim",
       "nvim-telescope/telescope-live-grep-args.nvim",
-      {
-        "ahmedkhalf/project.nvim",
-        config = function(_, opts)
-          require("project_nvim").setup(opts)
-        end,
-        opts = { patterns = { ".git", "package.json", ".dart_tool" } },
-      },
+      "nvim-lua/plenary.nvim",
     },
-    config = function()
-      require("telescope").load_extension("projects")
-    end,
   },
 
   --------------------------------------------------------------------------------

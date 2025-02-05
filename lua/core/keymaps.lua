@@ -60,11 +60,9 @@ end, {
   silent = true
 })
 
--- Move/Yank line segments
-keymap.set("n", "<leader>ml", "$", { desc = "Jump to line end" })
-keymap.set("n", "<leader>ms", "^", { desc = "Jump to line start" })
-keymap.set("n", "<leader>yl", "y$", { desc = "Yank to line end" })
-keymap.set("n", "<leader>ys", "y^", { desc = "Yank to line start" })
+-- Yank line segments
+keymap.set("n", "yel", "y$", { silent = true })
+keymap.set("n", "ysl", "y^", { silent = true })
 
 -- Jump to line start/end
 keymap.set("n", "mel", "<S-$>", { silent = true })
@@ -123,8 +121,13 @@ local function safe_save()
   vim.cmd("silent! write")
 end
 -- Save mappings
-keymap.set("n", "<C-s>", safe_save, { desc = "Save file" })
-keymap.set("i", "<C-s>", "<Esc>:w<CR>", { desc = "Save file" })
+-- MacOS Cmd + s Insert and Normal mode
+keymap.set("i", "<C-s>", "<Esc>:w<CR>", { noremap = true, silent = true })
+keymap.set("n", "<C-s>", "<Esc>:w<CR>", { noremap = true, silent = true })
+-- Linux/Windows Ctrl + S
+keymap.set("i", "<D-s>", "<Esc>:w<CR>", { noremap = true, silent = true })
+keymap.set("n", "<D-s>", "<Esc>:w<CR>", { noremap = true, silent = true })
+
 -- Quit mappings
 keymap.set("n", "<leader>fq", "<cmd>q!<CR>", { desc = "Force quit" })
 keymap.set("n", "<leader>fwq", "<cmd>wqa<CR>", { desc = "Save and quit all" })

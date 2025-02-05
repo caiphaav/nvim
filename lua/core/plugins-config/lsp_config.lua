@@ -219,8 +219,8 @@ mason_lspconfig.setup_handlers({
 
 -- Format on save for specific filetypes
 vim.api.nvim_create_autocmd("BufWritePre", {
-  pattern = { "*.lua", "*.go", "*.dart", "*.ts", "*.js", "*.css", "*.html" },
+  pattern = { "*.lua", "*.go", "*.dart", "*.ts", "*.tsx", "*.js", "*.css", "*.html" },
   callback = function()
-    vim.lsp.buf.format({ async = false, timeout_ms = 2000 })
+    vim.lsp.buf.format({ async = false, timeout_ms = 3000 })
   end
 })

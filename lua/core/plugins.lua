@@ -197,13 +197,6 @@ require("lazy").setup({
   {
     "stevearc/conform.nvim",
     event = "BufWritePre",
-    opts = {
-      formatters_by_ft = {
-        lua = { "stylua" },
-        dart = { "dart_format" },
-        javascript = { { "prettierd", "prettier" } },
-      },
-    },
   },
   {
     "nvim-treesitter/nvim-treesitter",
@@ -276,13 +269,11 @@ require("lazy").setup({
   },
   {
     "luckasRanarison/tailwind-tools.nvim",
-    dependencies = "nvim-treesitter/nvim-treesitter",
-    opts = {
-      document_color = {
-        enabled = true,
-        highlight = { background = true },
-      }
-    },
+    name = "tailwind-tools",
+    build = ":UpdateRemotePlugins",
+    dependencies = {
+      "neovim/nvim-lspconfig", -- optional
+    }
   },
 
   --------------------------------------------------------------------------------

@@ -1,11 +1,11 @@
 local mason_lspconfig = require("mason-lspconfig")
-local lspconfig = require("lspconfig")
 local cmp_nvim_lsp = require("cmp_nvim_lsp")
+local lspconfig = require("lspconfig")
 
 local servers = {
   "lua_ls",      -- Lua
   -- "dartls",      -- Dart/Flutter
-  "tsserver",    -- TypeScript/JavaScript
+  "ts_ls",       -- TypeScript/JavaScript
   "tailwindcss", -- Tailwind CSS
   "gopls",       -- Go
   "html",        -- HTML
@@ -131,7 +131,7 @@ local server_settings = {
     },
   },
 
-  tsserver = {
+  ts_ls = {
     init_options = {
       maxTsServerMemory = 4096,
       preferences = {

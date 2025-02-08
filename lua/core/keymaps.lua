@@ -117,16 +117,13 @@ keymap.set("n", "ds", delete_until_symbol, { silent = true })
 --------------------------------------------------------------------
 -- File Operations
 --------------------------------------------------------------------
-local function safe_save()
-  vim.cmd("silent! write")
-end
 -- Save mappings
 -- MacOS Cmd + s Insert and Normal mode
-keymap.set("i", "<C-s>", "<Cmd>w<CR>", { noremap = true, silent = true })
-keymap.set("n", "<C-s>", ":w<CR>", { noremap = true, silent = true })
+keymap.set("i", "<C-s>", "<Esc>:w<CR>", { noremap = true, silent = true })
+keymap.set("n", "<C-s>", "<Esc>:w<CR>", { noremap = true, silent = true })
 -- Linux/Windows Ctrl + S
-keymap.set("i", "<D-s>", "<Cmd>w<CR>", { noremap = true, silent = true })
-keymap.set("n", "<D-s>", ":w<CR>", { noremap = true, silent = true })
+keymap.set("i", "<D-s>", "<Esc>:w<CR>", { noremap = true, silent = true })
+keymap.set("n", "<D-s>", "<Esc>:w<CR>", { noremap = true, silent = true })
 
 -- Quit mappings
 keymap.set("n", "<leader>fq", "<cmd>q!<CR>", { desc = "Force quit" })

@@ -302,6 +302,13 @@ require("lazy").setup({
     "mbbill/undotree",
     keys = "<leader>u",
   },
+  {
+    "kevinhwang91/nvim-ufo",
+    event = "BufRead",
+    dependencies = {
+      { "kevinhwang91/promise-async" },
+    },
+  },
   -- Smooth scrolling
   {
     "declancm/cinnamon.nvim",
@@ -310,6 +317,13 @@ require("lazy").setup({
         keymaps = {
           extra = true,
           basic = true
+        },
+        disabled = false,
+        options = {
+          mode = "window",
+          max_delta = {
+            time = 350
+          }
         }
       })
     end,

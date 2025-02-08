@@ -23,10 +23,10 @@ local function flutter_hot_reload()
 end
 
 -- Autocommand for hot-reloading on save
-vim.api.nvim_create_autocmd('BufWritePost', {
-  pattern = '*/lib/*.dart',
-  callback = flutter_hot_reload,
-})
+-- vim.api.nvim_create_autocmd('BufWritePost', {
+--   pattern = '*/lib/*.dart',
+--   callback = flutter_hot_reload,
+-- })
 
 require("core.options")
 require("core.keymaps")

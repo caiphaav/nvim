@@ -30,7 +30,8 @@ local capabilities = vim.tbl_deep_extend(
         dynamicRegistration = false
       },
       foldingRange = {
-        dynamicRegistration = false
+        dynamicRegistration = false,
+        lineFoldingOnly = true
       }
     },
     workspace = {
@@ -214,13 +215,5 @@ mason_lspconfig.setup_handlers({
   function(server_name)
     local opts = vim.tbl_deep_extend("force", lsp_defaults, server_settings[server_name] or {})
     lspconfig[server_name].setup(opts)
-  end
-})
-
--- Format on save for specific filetypes
-vim.api.nvim_create_autocmd("BufWritePre", {
-  pattern = { "*.lua", "*.go", "*.dart", "*.ts", "*.tsx", "*.js", "*.css", "*.html" },
-  callback = function()
-    vim.lsp.buf.format({ async = false, timeout_ms = 3000 })
   end
 })

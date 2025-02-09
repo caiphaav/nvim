@@ -1,6 +1,6 @@
 vim.o.foldcolumn = '1'
-vim.o.foldlevel = 99
-vim.o.foldlevelstart = 99
+vim.o.foldlevel = 40
+vim.o.foldlevelstart = 40
 vim.o.foldenable = true
 vim.o.fillchars = [[eob: ,fold: ,foldopen:,foldsep: ,foldclose:]]
 vim.opt.viewoptions:remove('curdir') -- Don't save current directory

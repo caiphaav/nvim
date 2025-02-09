@@ -137,11 +137,11 @@ keymap.set("n", "<C-a>", "ggVG", {
 })
 
 -- Scrolling (centered jumps)
-keymap.set("n", "<C-Up>", "10kzz", { desc = "Scroll up 10 lines (centered)" })
-keymap.set("n", "<C-Down>", "10jzz", { desc = "Scroll down 10 lines (centered)" })
+keymap.set("n", "<C-Up>", "10k", { desc = "Scroll up 10 lines (centered)" })
+keymap.set("n", "<C-Down>", "10j", { desc = "Scroll down 10 lines (centered)" })
 -- Horizontal navigation with centered jumps
-keymap.set("n", "<C-Left>", "20hzz", { desc = "Move left 10 chars (centered)" })
-keymap.set("n", "<C-Right>", "20lzz", { desc = "Move right 10 chars (centered)" })
+keymap.set("n", "<C-Left>", "20h", { desc = "Move left 10 chars (centered)" })
+keymap.set("n", "<C-Right>", "20l", { desc = "Move right 10 chars (centered)" })
 
 --------------------------------------------------------------------
 -- Line Operations

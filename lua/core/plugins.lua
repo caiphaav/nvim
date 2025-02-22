@@ -116,32 +116,39 @@ require("lazy").setup({
     'sindrets/diffview.nvim',
     dependencies = 'nvim-lua/plenary.nvim',
     config = function()
+      local actions = require("diffview.actions")
       require('diffview').setup({
-        enhanced_diff_hl = true, -- Enhanced diff highlighting
+        enhanced_diff_hl = true,
         icons = {
-          folder_closed = "",
-          folder_open = "",
+          folder_closed = "📁",
+          folder_open = "📂",
         },
         signs = {
-          fold_closed = "",
-          fold_open = "",
+          fold_closed = "▶",
+          fold_open = "▼",
           done = "✓",
         },
         view = {
-          -- Default file panel layout
-          default = {
-            layout = "diff2_horizontal",
-          },
-          merge_tool = {
-            layout = "diff3_horizontal", -- Show three-way diff for merge conflicts
-            disable_diagnostics = true,  -- Disable diagnostics for merge conflicts
-          },
+          default = { layout = "diff2_horizontal" },
+          merge_tool = { layout = "diff3_horizontal", disable_diagnostics = true },
         },
         keymaps = {
           disable_defaults = false,
+          view = {
+            { { "n", "v" }, "o", actions.conflict_choose("ours"),   { desc = "Choose Ours", nowait = true } },
+            { { "n", "v" }, "t", actions.conflict_choose("theirs"), { desc = "Choose Theirs", nowait = true } },
+            { { "n", "v" }, "b", actions.conflict_choose("base"),   { desc = "Choose Base", nowait = true } },
+            { { "n", "v" }, "a", actions.conflict_choose("all"),    { desc = "Choose All", nowait = true } },
+          },
+          merge_tool = {
+            { { "n", "v" }, "o", actions.conflict_choose("ours"),   { desc = "Choose Ours", nowait = true } },
+            { { "n", "v" }, "t", actions.conflict_choose("theirs"), { desc = "Choose Theirs", nowait = true } },
+            { { "n", "v" }, "b", actions.conflict_choose("base"),   { desc = "Choose Base", nowait = true } },
+            { { "n", "v" }, "a", actions.conflict_choose("all"),    { desc = "Choose All", nowait = true } },
+          },
         },
       })
-    end
+    end,
   },
   {
     "lewis6991/gitsigns.nvim",
@@ -302,6 +309,12 @@ require("lazy").setup({
     "mbbill/undotree",
     keys = "<leader>u",
   },
+  -- -- Multiline
+  -- {
+  --   'mg979/vim-visual-multi',
+  --   branch = "master"
+  -- },
+  -- Folds
   {
     "kevinhwang91/nvim-ufo",
     event = "BufRead",

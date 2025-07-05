@@ -46,7 +46,6 @@ local tools = {
 mason_lspconfig.setup({
   ensure_installed = servers,
   automatic_installation = true,
-  run_on_start = true,
 })
 
 mason_tool_installer.setup({
@@ -206,6 +205,7 @@ local server_configs = {
     settings = {
       gopls = {
         analyses = {
+          ST1000 = false,
           fieldalignment = true,
           nilness = true,
           unusedparams = true,

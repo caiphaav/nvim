@@ -57,23 +57,14 @@ require("lazy").setup({
       "nvim-neotest/nvim-nio"
     },
   },
-
   --------------------------------------------------------------------------------
   -- UI & Appearance
   --------------------------------------------------------------------------------
-  {
-    "tiagovla/tokyodark.nvim",
-    lazy = false,
-    priority = 1000,
-    config = function()
-      vim.cmd.colorscheme("tokyodark")
-    end,
-  },
+  { "catppuccin/nvim", name = "catppuccin", priority = 1000 },
   {
     "nvim-lualine/lualine.nvim",
     event = "UIEnter",
     opts = {
-      options = { theme = "tokyodark" },
       extensions = { "neo-tree", "trouble" },
     },
   },
@@ -282,7 +273,7 @@ require("lazy").setup({
       "neovim/nvim-lspconfig", -- optional
     }
   },
-
+  'WhoIsSethDaniel/mason-tool-installer.nvim',
   --------------------------------------------------------------------------------
   -- Utilities
   --------------------------------------------------------------------------------
@@ -309,36 +300,4 @@ require("lazy").setup({
     "mbbill/undotree",
     keys = "<leader>u",
   },
-  -- -- Multiline
-  -- {
-  --   'mg979/vim-visual-multi',
-  --   branch = "master"
-  -- },
-  -- Folds
-  {
-    "kevinhwang91/nvim-ufo",
-    event = "BufRead",
-    dependencies = {
-      { "kevinhwang91/promise-async" },
-    },
-  },
-  -- Smooth scrolling
-  {
-    "declancm/cinnamon.nvim",
-    config = function()
-      require("cinnamon").setup({
-        keymaps = {
-          extra = true,
-          basic = true
-        },
-        disabled = false,
-        options = {
-          mode = "window",
-          max_delta = {
-            time = 350
-          }
-        }
-      })
-    end,
-  }
 })

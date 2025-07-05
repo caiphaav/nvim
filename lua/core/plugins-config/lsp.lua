@@ -1,166 +1,202 @@
+-- lsp.lua
+local mason = require("mason")
 local mason_lspconfig = require("mason-lspconfig")
-local cmp_nvim_lsp = require("cmp_nvim_lsp")
+local mason_tool_installer = require("mason-tool-installer")
 local lspconfig = require("lspconfig")
+local cmp_nvim_lsp = require("cmp_nvim_lsp")
 
+-- Mason setup
+mason.setup({
+  ui = {
+    icons = {
+      package_installed = "✓",
+      package_pending = "➜",
+      package_uninstalled = "✗"
+    }
+  }
+})
+
+-- LSP servers for your languages
 local servers = {
-  "lua_ls",      -- Lua
-  -- "dartls",      -- Dart/Flutter
   "ts_ls",       -- TypeScript/JavaScript
-  "tailwindcss", -- Tailwind CSS
+  "biome",       -- Modern JS/TS linter/formatter
   "gopls",       -- Go
+  "dartls",      -- Dart/Flutter
+  "tailwindcss", -- Tailwind CSS (useful for web projects)
   "html",        -- HTML
   "cssls",       -- CSS
-  "sqlls",       -- SQL
-  "biome",       -- Modern JS/TS alternative (combines formatter + linter)
+  "jsonls",      -- JSON
 }
 
--- Improved Mason configuration
+-- Additional tools for debugging and formatting
+local tools = {
+  -- Debuggers
+  "js-debug-adapter",   -- JavaScript/TypeScript debugger
+  "delve",              -- Go debugger
+  "dart-debug-adapter", -- Dart debugger
+
+  -- Formatters & Linters
+  "gofumpt",       -- Go formatter
+  "golangci-lint", -- Go linter
+  "gomodifytags",  -- Go struct tags
+  "gotests",       -- Go test generator
+  "impl",          -- Go interface implementation
+}
+
 mason_lspconfig.setup({
   ensure_installed = servers,
   automatic_installation = true,
 })
 
--- Enhanced capabilities with additional features
+mason_tool_installer.setup({
+  ensure_installed = tools,
+  auto_update = false,
+  run_on_start = true,
+})
+
+-- Enhanced capabilities
 local capabilities = vim.tbl_deep_extend(
   "force",
   cmp_nvim_lsp.default_capabilities(),
   {
     textDocument = {
-      documentHighlight = {
-        dynamicRegistration = false
-      },
       foldingRange = {
         dynamicRegistration = false,
         lineFoldingOnly = true
-      }
+      },
+      documentHighlight = {
+        dynamicRegistration = false
+      },
+      inlayHint = {
+        dynamicRegistration = true,
+      },
     },
     workspace = {
-      workspaceFolders = true
+      workspaceFolders = true,
+      didChangeWatchedFiles = {
+        dynamicRegistration = true,
+      },
     }
   }
 )
 
-local function switch_to_previous_file()
-  local current_buf = vim.api.nvim_get_current_buf()
-  local alternate_buf = vim.fn.bufnr('#')
-
-  if alternate_buf ~= -1 and alternate_buf ~= current_buf then
-    vim.api.nvim_set_current_buf(alternate_buf)
-  else
-    print("No previous file to switch to")
-  end
+-- Utility functions
+local function toggle_inlay_hints()
+  local bufnr = vim.api.nvim_get_current_buf()
+  vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = bufnr }), { bufnr = bufnr })
 end
 
--- Better organized LSP keymaps
-local on_attach = function(_, bufnr)
+-- Enhanced on_attach function
+local on_attach = function(client, bufnr)
   -- Enable omnifunc
   vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
 
-  -- Create a helper function for buffer-local keymaps
-  local bufmap = function(mode, lhs, rhs, desc)
+  -- Enable inlay hints if supported
+  if client.supports_method("textDocument/inlayHint") then
+    vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+  end
+
+  -- Buffer-local keymap helper
+  local function keymap(mode, lhs, rhs, desc)
     vim.keymap.set(mode, lhs, rhs, {
       buffer = bufnr,
+      desc = desc,
       noremap = true,
       silent = true,
-      desc = desc,
     })
   end
 
   -- Navigation
-  bufmap("n", "gd", vim.lsp.buf.definition, "Go to definition")
-  bufmap("n", "gD", vim.lsp.buf.declaration, "Go to declaration")
-  bufmap("n", "gr", vim.lsp.buf.references, "Find references")
-  bufmap("n", "gi", vim.lsp.buf.implementation, "Go to implementation")
-  bufmap("n", "K", vim.lsp.buf.hover, "Show documentation")
-  bufmap("n", "<C-k>", vim.lsp.buf.signature_help, "Signature help")
-  vim.keymap.set("n", "<C-p>", switch_to_previous_file,
-    vim.tbl_extend("force", { noremap = true, silent = true, buffer = bufnr }, { desc = "Switch to previous file" }))
+  keymap("n", "gd", vim.lsp.buf.definition, "Go to definition")
+  keymap("n", "gD", vim.lsp.buf.declaration, "Go to declaration")
+  keymap("n", "gr", vim.lsp.buf.references, "Find references")
+  keymap("n", "gi", vim.lsp.buf.implementation, "Go to implementation")
+  keymap("n", "gt", vim.lsp.buf.type_definition, "Go to type definition")
+
+  -- Documentation
+  keymap("n", "K", vim.lsp.buf.hover, "Show hover documentation")
+  keymap("n", "<C-k>", vim.lsp.buf.signature_help, "Show signature help")
+  keymap("i", "<C-k>", vim.lsp.buf.signature_help, "Show signature help")
 
   -- Code actions
-  bufmap("n", "<leader>ca", vim.lsp.buf.code_action, "Code actions")
-  bufmap("n", "<leader>rn", vim.lsp.buf.rename, "Rename symbol")
-
-  -- Workspace
-  bufmap("n", "<leader>wa", vim.lsp.buf.add_workspace_folder, "Add workspace folder")
-  bufmap("n", "<leader>wr", vim.lsp.buf.remove_workspace_folder, "Remove workspace folder")
-  bufmap("n", "<leader>wl", function()
-    print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-  end, "List workspace folders")
+  keymap("n", "<leader>ca", vim.lsp.buf.code_action, "Code actions")
+  keymap("v", "<leader>ca", vim.lsp.buf.code_action, "Code actions")
+  keymap("n", "<leader>rn", vim.lsp.buf.rename, "Rename symbol")
 
   -- Formatting
-  bufmap("n", "<leader>f", function()
-    vim.lsp.buf.format({ async = true, timeout_ms = 5000 })
+  keymap("n", "<leader>f", function()
+    vim.lsp.buf.format({
+      async = true,
+      timeout_ms = 10000,
+      filter = function(format_client)
+        -- Prefer Biome for JS/TS files
+        if vim.bo.filetype == "javascript" or vim.bo.filetype == "typescript"
+            or vim.bo.filetype == "javascriptreact" or vim.bo.filetype == "typescriptreact" then
+          return format_client.name == "biome"
+        end
+        return true
+      end
+    })
   end, "Format buffer")
-
-  -- Diagnostics
-  bufmap("n", "[d", vim.diagnostic.goto_prev, "Previous diagnostic")
-  bufmap("n", "]d", vim.diagnostic.goto_next, "Next diagnostic")
-  bufmap("n", "<leader>d", vim.diagnostic.open_float, "Show diagnostic")
-
-  -- Type information
-  bufmap("n", "<leader>td", vim.lsp.buf.type_definition, "Type definition")
 end
 
--- Base LSP configuration
-local lsp_defaults = {
-  capabilities = capabilities,
-  on_attach = on_attach,
-  flags = {
-    debounce_text_changes = 150,
-  },
-}
-
 -- Server-specific configurations
-local server_settings = {
-  lua_ls = {
+local server_configs = {
+  ts_ls = {
     settings = {
-      Lua = {
-        runtime = {
-          version = "LuaJIT",
+      typescript = {
+        inlayHints = {
+          includeInlayParameterNameHints = "all",
+          includeInlayParameterNameHintsWhenArgumentMatchesName = true,
+          includeInlayFunctionParameterTypeHints = true,
+          includeInlayVariableTypeHints = true,
+          includeInlayPropertyDeclarationTypeHints = true,
+          includeInlayFunctionLikeReturnTypeHints = true,
+          includeInlayEnumMemberValueHints = true,
         },
-        diagnostics = {
-          globals = { "vim" },
+        suggest = {
+          includeCompletionsForModuleExports = true,
         },
-        workspace = {
-          library = vim.api.nvim_get_runtime_file("", true),
-          checkThirdParty = false,
+        preferences = {
+          includePackageJsonAutoImports = "auto",
         },
-        telemetry = {
-          enable = false,
+      },
+      javascript = {
+        inlayHints = {
+          includeInlayParameterNameHints = "all",
+          includeInlayParameterNameHintsWhenArgumentMatchesName = true,
+          includeInlayFunctionParameterTypeHints = true,
+          includeInlayVariableTypeHints = true,
+          includeInlayPropertyDeclarationTypeHints = true,
+          includeInlayFunctionLikeReturnTypeHints = true,
+          includeInlayEnumMemberValueHints = true,
+        },
+        suggest = {
+          includeCompletionsForModuleExports = true,
         },
       },
     },
   },
 
-  ts_ls = {
-    init_options = {
-      maxTsServerMemory = 4096,
-      preferences = {
-        includeInlayParameterNameHints = "all",
-        includeInlayParameterNameHintsWhenArgumentMatchesName = true,
-        includeInlayFunctionParameterTypeHints = true,
-        includeInlayVariableTypeHints = true,
-        includeCompletionsForModuleExports = true,
-        includeCompletionsWithInsertText = true,
-      }
-    }
-  },
-
-  tailwindcss = {
+  biome = {
     filetypes = {
-      "html",
-      "css",
       "javascript",
       "javascriptreact",
       "typescript",
       "typescriptreact",
-      "svelte",
-      "vue",
-      "templ",
+      "json",
+      "jsonc"
     },
-    init_options = {
-      userLanguages = {
-        templ = "html",
+    single_file_support = true,
+    settings = {
+      biome = {
+        formatter = {
+          enabled = true,
+          formatOnSave = true,
+        },
+        linter = {
+          enabled = true,
+        },
       },
     },
   },
@@ -172,48 +208,200 @@ local server_settings = {
           fieldalignment = true,
           nilness = true,
           unusedparams = true,
+          unusedwrite = true,
+          useany = true,
+          shadow = true,
         },
         staticcheck = true,
         gofumpt = true,
+        completeUnimported = true,
+        usePlaceholders = true,
+        matcher = "Fuzzy",
+        symbolMatcher = "fuzzy",
+        buildFlags = { "-tags", "integration" },
         hints = {
           assignVariableTypes = true,
           compositeLiteralFields = true,
+          compositeLiteralTypes = true,
           constantValues = true,
           functionTypeParameters = true,
           parameterNames = true,
           rangeVariableTypes = true,
         },
+        codelenses = {
+          gc_details = true,
+          generate = true,
+          regenerate_cgo = true,
+          test = true,
+          tidy = true,
+          upgrade_dependency = true,
+          vendor = true,
+        },
       },
     },
+    on_attach = function(client, bufnr)
+      on_attach(client, bufnr)
+
+      -- Go-specific keymaps
+      local function go_keymap(mode, lhs, rhs, desc)
+        vim.keymap.set(mode, lhs, rhs, {
+          buffer = bufnr,
+          desc = desc,
+          noremap = true,
+          silent = true,
+        })
+      end
+
+      go_keymap("n", "<leader>gt", ":GoTest<CR>", "Run Go tests")
+      go_keymap("n", "<leader>gf", ":GoTestFunc<CR>", "Run Go test function")
+      go_keymap("n", "<leader>gc", ":GoCoverage<CR>", "Show Go coverage")
+      go_keymap("n", "<leader>gi", ":GoImpl<CR>", "Implement interface")
+      go_keymap("n", "<leader>gat", ":GoAddTags<CR>", "Add struct tags")
+      go_keymap("n", "<leader>grt", ":GoRemoveTags<CR>", "Remove struct tags")
+    end,
   },
 
   dartls = {
+    cmd = { "dart", "language-server", "--protocol=lsp" },
+    filetypes = { "dart" },
     init_options = {
-      closingLabels = true,
-      flutterOutline = true,
-      onlyAnalyzeProjectsWithOpenFiles = true,
-      outline = true,
+      onlyAnalyzeProjectsWithOpenFiles = false,
       suggestFromUnimportedLibraries = true,
+      closingLabels = true,
+      outline = true,
+      flutterOutline = true,
     },
     settings = {
       dart = {
         completeFunctionCalls = true,
         showTodos = true,
+        enableSnippets = true,
         updateImportsOnRename = true,
-      }
-    }
+      },
+    },
+    on_attach = function(client, bufnr)
+      on_attach(client, bufnr)
+
+      -- Dart/Flutter specific keymaps
+      local function dart_keymap(mode, lhs, rhs, desc)
+        vim.keymap.set(mode, lhs, rhs, {
+          buffer = bufnr,
+          desc = desc,
+          noremap = true,
+          silent = true,
+        })
+      end
+
+      dart_keymap("n", "<leader>fr", ":FlutterRun<CR>", "Flutter run")
+      dart_keymap("n", "<leader>fr", ":FlutterReload<CR>", "Flutter hot reload")
+      dart_keymap("n", "<leader>fR", ":FlutterRestart<CR>", "Flutter hot restart")
+    end,
   },
 
-  biome = {
-    filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
-    single_file_support = true,
+  tailwindcss = {
+    filetypes = {
+      "html", "css", "scss", "javascript", "javascriptreact",
+      "typescript", "typescriptreact", "vue", "svelte"
+    },
+    settings = {
+      tailwindCSS = {
+        experimental = {
+          classRegex = {
+            "tw`([^`]*)",
+            "tw=\"([^\"]*)",
+            "tw={\"([^\"}]*)",
+            "tw\\.\\w+`([^`]*)",
+            "tw\\(.*?\\)`([^`]*)",
+          },
+        },
+      },
+    },
+  },
+
+  jsonls = {
+    settings = {
+      json = {
+        schemas = require('schemastore').json.schemas(),
+        validate = { enable = true },
+      },
+    },
   },
 }
 
--- Setup servers with merged configurations
-mason_lspconfig.setup_handlers({
-  function(server_name)
-    local opts = vim.tbl_deep_extend("force", lsp_defaults, server_settings[server_name] or {})
-    lspconfig[server_name].setup(opts)
-  end
+-- Setup servers manually
+for _, server_name in ipairs(servers) do
+  local config = vim.tbl_deep_extend("force", {
+    capabilities = capabilities,
+    on_attach = on_attach,
+    flags = {
+      debounce_text_changes = 150,
+    },
+  }, server_configs[server_name] or {})
+
+  lspconfig[server_name].setup(config)
+end
+
+-- Diagnostic configuration
+vim.diagnostic.config({
+  virtual_text = {
+    prefix = "●",
+    spacing = 2,
+  },
+  signs = true,
+  underline = true,
+  update_in_insert = false,
+  severity_sort = true,
+  float = {
+    focusable = false,
+    style = "minimal",
+    border = "rounded",
+    source = "always",
+    header = "",
+    prefix = "",
+  },
 })
+
+-- Diagnostic signs
+local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
+for type, icon in pairs(signs) do
+  local hl = "DiagnosticSign" .. type
+  vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
+end
+
+-- LSP UI customization
+vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
+  border = "rounded",
+})
+
+vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, {
+  border = "rounded",
+})
+
+-- Auto commands for LSP
+local lsp_group = vim.api.nvim_create_augroup("LspConfig", { clear = true })
+
+-- Highlight symbol under cursor
+vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
+  group = lsp_group,
+  callback = function()
+    vim.lsp.buf.document_highlight()
+  end,
+})
+
+vim.api.nvim_create_autocmd("CursorMoved", {
+  group = lsp_group,
+  callback = function()
+    vim.lsp.buf.clear_references()
+  end,
+})
+
+-- Format on save for specific filetypes
+vim.api.nvim_create_autocmd("BufWritePre", {
+  group = lsp_group,
+  pattern = { "*.go", "*.ts", "*.js", "*.tsx", "*.jsx", "*.dart" },
+  callback = function()
+    vim.lsp.buf.format({ timeout_ms = 2000 })
+  end,
+})
+
+return {}

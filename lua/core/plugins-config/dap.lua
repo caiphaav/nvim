@@ -1,69 +1,91 @@
-local dap, dapui = require("dap"), require("dapui")
+-- dap.lua (Simple Dart/Flutter only)
+local dap = require("dap")
+local dapui = require("dapui")
 
--- DAP UI setup
+-- Simple DAP UI setup
 dapui.setup({
-  icons = { expanded = "▾", collapsed = "▸", current_frame = "▸" },
-  mappings = {
-    -- Use a table to apply multiple mappings
-    expand = { "<CR>", "<2-LeftMouse>" },
-    open = "o",
-    remove = "d",
-    edit = "e",
-    repl = "r",
-    toggle = "t",
-  },
   layouts = {
     {
       elements = {
-        -- Elements can be strings or table with id and size keys.
-        { id = "scopes", size = 0.25 },
-        "breakpoints",
-        "stacks",
-        "watches",
+        { id = "scopes",      size = 0.25 },
+        { id = "breakpoints", size = 0.25 },
+        { id = "stacks",      size = 0.25 },
+        { id = "watches",     size = 0.25 },
       },
-      size = 40, -- 40 columns
+      size = 40,
       position = "left",
     },
     {
       elements = {
-        "repl",
-        "console",
+        { id = "repl",    size = 0.5 },
+        { id = "console", size = 0.5 },
       },
-      size = 0.25, -- 25% of total lines
+      size = 0.25,
       position = "bottom",
-    },
-  },
-  floating = {
-    max_height = nil,
-    max_width = nil,
-    border = "single",
-    mappings = {
-      close = { "q", "<Esc>" },
     },
   },
 })
 
--- Automatically open UI
+-- Dart adapter
+dap.adapters.dart = {
+  type = "executable",
+  command = "dart",
+  args = { "debug_adapter" }
+}
+
+-- Flutter adapter (same as dart but with flutter command)
+dap.adapters.flutter = {
+  type = "executable",
+  command = "flutter",
+  args = { "debug_adapter" }
+}
+
+-- Dart configurations
+dap.configurations.dart = {
+  {
+    type = "dart",
+    request = "launch",
+    name = "Launch Dart",
+    program = "${file}",
+    cwd = "${workspaceFolder}",
+  },
+  {
+    type = "flutter",
+    request = "launch",
+    name = "Launch Flutter (Debug)",
+    program = "${workspaceFolder}/lib/main.dart",
+    cwd = "${workspaceFolder}",
+  },
+  {
+    type = "flutter",
+    request = "launch",
+    name = "Launch Flutter (Profile)",
+    program = "${workspaceFolder}/lib/main.dart",
+    cwd = "${workspaceFolder}",
+    args = { "--profile" }
+  },
+}
+
+-- Simple keymaps
+vim.keymap.set('n', '<F5>', dap.continue, { desc = "Debug: Continue" })
+vim.keymap.set('n', '<F10>', dap.step_over, { desc = "Debug: Step Over" })
+vim.keymap.set('n', '<F11>', dap.step_into, { desc = "Debug: Step Into" })
+vim.keymap.set('n', '<F12>', dap.step_out, { desc = "Debug: Step Out" })
+vim.keymap.set('n', '<leader>b', dap.toggle_breakpoint, { desc = "Debug: Toggle Breakpoint" })
+vim.keymap.set('n', '<leader>du', dapui.toggle, { desc = "Debug: Toggle UI" })
+vim.keymap.set('n', '<leader>dt', dap.terminate, { desc = "Debug: Terminate" })
+
+-- Auto open/close UI
 dap.listeners.after.event_initialized["dapui_config"] = function()
   dapui.open()
 end
+
 dap.listeners.before.event_terminated["dapui_config"] = function()
   dapui.close()
 end
+
 dap.listeners.before.event_exited["dapui_config"] = function()
   dapui.close()
 end
 
--- Key mappings
-vim.keymap.set('n', '<F5>', function() dap.continue() end)
-vim.keymap.set('n', '<F10>', function() dap.step_over() end)
-vim.keymap.set('n', '<F11>', function() dap.step_into() end)
-vim.keymap.set('n', '<F12>', function() dap.step_out() end)
-vim.keymap.set('n', '<Leader>b', function() dap.toggle_breakpoint() end)
-vim.keymap.set('n', '<Leader>B', function() dap.set_breakpoint(vim.fn.input('Breakpoint condition: ')) end)
-vim.keymap.set('n', '<Leader>lp', function() dap.set_breakpoint(nil, nil, vim.fn.input('Log point message: ')) end)
-vim.keymap.set('n', '<Leader>dr', function() dap.repl.open() end)
-vim.keymap.set('n', '<Leader>dl', function() dap.run_last() end)
-
--- Toggle DAP UI
-vim.keymap.set('n', 'du', function() dapui.toggle() end)
+return {}

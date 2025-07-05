@@ -8,7 +8,5 @@ harpoon:setup({
   }
 })
 
-require("harpoon"):extend(require("harpoon.extensions").builtins.command_on_nav('UfoEnableFold'))
-
 vim.keymap.set("n", "X", function() harpoon:list():add() end)
 vim.keymap.set("n", "S", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)

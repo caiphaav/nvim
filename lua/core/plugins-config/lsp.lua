@@ -46,6 +46,7 @@ local tools = {
 mason_lspconfig.setup({
   ensure_installed = servers,
   automatic_installation = true,
+  run_on_start = true,
 })
 
 mason_tool_installer.setup({

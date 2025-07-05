@@ -205,6 +205,7 @@ local server_configs = {
     settings = {
       gopls = {
         analyses = {
+          errcheck = true,
           ST1000 = false,
           fieldalignment = true,
           nilness = true,

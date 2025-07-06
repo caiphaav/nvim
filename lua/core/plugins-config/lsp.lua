@@ -34,6 +34,8 @@ local tools = {
   "js-debug-adapter",   -- JavaScript/TypeScript debugger
   "delve",              -- Go debugger
   "dart-debug-adapter", -- Dart debugger
+  -- Add these Dart-specific tools
+  -- "dart-code-metrics",  -- Code quality metrics
 
   -- Formatters & Linters
   "gofumpt",       -- Go formatter
@@ -81,12 +83,6 @@ local capabilities = vim.tbl_deep_extend(
     }
   }
 )
-
--- Utility functions
-local function toggle_inlay_hints()
-  local bufnr = vim.api.nvim_get_current_buf()
-  vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = bufnr }), { bufnr = bufnr })
-end
 
 -- Enhanced on_attach function
 local on_attach = function(client, bufnr)
@@ -294,10 +290,60 @@ local server_configs = {
     },
     settings = {
       dart = {
+        -- Code completion
         completeFunctionCalls = true,
         showTodos = true,
         enableSnippets = true,
         updateImportsOnRename = true,
+
+        -- Enhanced analysis options
+        analysisExcludedFolders = {
+          ".dart_tool",
+          ".pub-cache",
+          "build",
+          ".git",
+          "node_modules",
+        },
+
+        -- Linting and formatting
+        lineLength = 80,
+        enableSdkFormatter = true,
+        insertArgumentPlaceholders = true,
+
+        -- Performance optimizations
+        maxLogLineLength = 2000,
+        analyzeAngularTemplates = false,
+
+        -- Error reporting
+        showMainCodeLens = true,
+        showTestCodeLens = true,
+        showDebugCodeLens = true,
+
+        -- Import management
+        organizeImportsOnSave = true,
+
+        -- Flutter-specific settings
+        flutterSdkPath = "", -- Auto-detect
+        flutterHotReloadOnSave = true,
+        flutterCreateAndroidModule = true,
+        flutterCreateIOSModule = true,
+
+        -- Advanced analysis
+        enableCompletionCommitCharacters = true,
+        triggerSignatureHelpAutomatically = true,
+
+        -- Debugging
+        debugSdkLibraries = false,
+        debugExternalLibraries = false,
+
+        -- Code metrics and quality
+        showIgnoreForFile = true,
+        includeDependenciesInWorkspaceSymbols = true,
+
+        -- Experimental features
+        previewCommitCharacters = true,
+        previewFlutterUiGuides = true,
+        previewFlutterUiGuidesCustomTracking = true,
       },
     },
     on_attach = function(client, bufnr)

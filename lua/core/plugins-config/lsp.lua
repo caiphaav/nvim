@@ -41,6 +41,8 @@ local tools = {
   "gomodifytags",  -- Go struct tags
   "gotests",       -- Go test generator
   "impl",          -- Go interface implementation
+  "staticcheck",   -- Comprehensive static analysis
+  "revive",        -- Fast, configurable linter
 }
 
 mason_lspconfig.setup({
@@ -207,6 +209,9 @@ local server_configs = {
         analyses = {
           errcheck = true,
           ST1000 = false,
+          SA9003 = true, -- Empty branches (staticcheck)
+          SA1019 = true, -- Using deprecated functions
+          SA4006 = true, -- Unused value assignments
           fieldalignment = true,
           nilness = true,
           unusedparams = true,
@@ -223,8 +228,12 @@ local server_configs = {
           printf = true,
           unreachable = true,
           unmarshal = true,
+          simplifycompositelit = true,
+          unusedvariable = true,
         },
         staticcheck = true,
+        experimentalDiagnosticsDelay = "250ms",
+        diagnosticsDelay = "500ms",
         gofumpt = true,
         completeUnimported = true,
         usePlaceholders = true,

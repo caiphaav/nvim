@@ -9,14 +9,35 @@ require("lazy").setup({
   -- LSP & Language Support
   --------------------------------------------------------------------------------
   {
+    "williamboman/mason.nvim",
+    config = function()
+      require("mason").setup()
+    end,
+  },
+  {
+    "williamboman/mason-lspconfig.nvim",
+    dependencies = { "williamboman/mason.nvim", "neovim/nvim-lspconfig" },
+    config = function()
+      require("mason-lspconfig").setup()
+    end,
+  },
+  {
     "neovim/nvim-lspconfig",
-    event = "VeryLazy",
     dependencies = {
       "williamboman/mason.nvim",
-      "williamboman/mason-lspconfig.nvim",
       "hrsh7th/cmp-nvim-lsp",
-      "folke/neoconf.nvim",
-      "folke/neodev.nvim",
+    },
+    -- The main configuration will go here (see Step 2)
+  },
+  -- Autocompletion Engine (Highly Recommended)
+  {
+    "hrsh7th/nvim-cmp",
+    dependencies = {
+      "hrsh7th/cmp-nvim-lsp",
+      "hrsh7th/cmp-buffer",
+      "hrsh7th/cmp-path",
+      "L3MON4D3/LuaSnip", -- Optional, for snippets
+      "saadparwaiz1/cmp_luasnip", -- Optional, for snippets
     },
   },
   {
@@ -199,6 +220,9 @@ require("lazy").setup({
   {
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter-textobjects",
+    },
     event = { "BufReadPost", "BufNewFile" },
     opts = {
       ensure_installed = { "lua", "dart", "javascript", "typescript" },

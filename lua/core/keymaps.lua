@@ -22,16 +22,11 @@ end
 
 keymap.set("n", "<C-q>", smart_close, { noremap = true, silent = true, desc = "Close buffer or return to Alpha" })
 
--- Navigate buffers
-keymap.set("n", "<C-p>", "<cmd>bprevious<CR>", {
+-- Navigate tabs
+keymap.set("n", "<C-p>", "<C-^>", {
   noremap = true,
   silent = true,
-  desc = "Go to previous buffer",
-})
-keymap.set("n", "<C-n>", "<cmd>bnext<CR>", {
-  noremap = true,
-  silent = true,
-  desc = "Go to next buffer",
+  desc = "Go to previous/alternate buffer",
 })
 
 --------------------------------------------------------------------

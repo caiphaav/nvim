@@ -36,7 +36,7 @@ require("lazy").setup({
       "hrsh7th/cmp-nvim-lsp",
       "hrsh7th/cmp-buffer",
       "hrsh7th/cmp-path",
-      "L3MON4D3/LuaSnip", -- Optional, for snippets
+      "L3MON4D3/LuaSnip",         -- Optional, for snippets
       "saadparwaiz1/cmp_luasnip", -- Optional, for snippets
     },
   },
@@ -81,7 +81,7 @@ require("lazy").setup({
   --------------------------------------------------------------------------------
   -- UI & Appearance
   --------------------------------------------------------------------------------
-  { "catppuccin/nvim", name = "catppuccin", priority = 1000 },
+  { "rebelot/kanagawa.nvim", priority = 1000 },
   {
     "nvim-lualine/lualine.nvim",
     event = "UIEnter",

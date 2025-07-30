@@ -7,6 +7,7 @@ require("conform").setup({
     php = { "pretty-php" },
     typescript = { "biome" },
     json = { "biome" },
+    python = { "black" },
     go = { "golines", "goimports" },
     typescriptreact = { "biome" },
   },

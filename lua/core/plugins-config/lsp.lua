@@ -112,6 +112,16 @@ for _, server_name in ipairs(servers) do
     capabilities = capabilities,
   }
 
+  if server_name == "gopls" then
+    server_opts.settings = {
+      gopls = {
+        analyses = { unusedparams = true },
+        staticcheck = true,
+        gofumpt = true,
+      }
+    }
+  end
+
   if server_name == "lua_ls" then
     server_opts.settings = {
       Lua = {

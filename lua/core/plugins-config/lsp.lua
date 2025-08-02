@@ -122,6 +122,20 @@ for _, server_name in ipairs(servers) do
     }
   end
 
+  if server_name == "jsonls" then
+    server_opts.settings = {
+      json = {
+        schemas = require('schemastore').json.schemas(),
+        validate = {
+          enable = true,
+        },
+        format = {
+          enable = true,
+        }
+      }
+    }
+  end
+
   if server_name == "lua_ls" then
     server_opts.settings = {
       Lua = {
